@@ -34,7 +34,7 @@ import java.sql.Types;
 
 public class DatabaseControl {
 	static Connection connection;
-	static int currentBookID=0, currentPatronID=0; //this number holds the new book and new patron ID numbers
+	static int currentBookID=0, currentPatronID=0; //this number holds the new book and new patron ID numbers 
 	
 	//String with command to create/connect to a database named 'Library_01'
 	private static final String connectionURL="jdbc:derby:Library_01;create=true";

@@ -17,7 +17,7 @@ public class LibrarySystemApp {
 		db.showAllFromQuery("SELECT * FROM Books");
 //		db.showAllFromQuery("SELECT * FROM Books WHERE GENRE='Kids' ORDER BY Title");
 //		
-//		System.out.println();
+		System.out.println();
 //		
 //
 //		db.addPatron("Mike", "Dey");
