@@ -93,8 +93,10 @@ package librarySystem;
 		 */
 		public static void addPatron() throws SQLException
 		{
-			String myCommand = ("INSERT INTO Patrons VALUES (1002, 'Sara', 'Dey')");
+			String myCommand = ("INSERT INTO Patrons VALUES (1000, 'Lisa', 'Hammond'), (1001, 'Mike', 'Dey'), (1003, 'Liv', 'Moore'), (1004, 'Major', 'Lilywhite')");
 			dbCommunicate(myCommand);
+			
+			//(1002, 'Sara', 'Dey')
 		}
 
 		/**
