@@ -37,10 +37,10 @@ public class DatabaseControl {
 	static int currentBookID=0, currentPatronID=0; //this number holds the new book and new patron ID numbers 
 	
 	//String with command to create/connect to a database named 'Library_01'
-	private static final String connectionURL="jdbc:derby:Library_01;create=true";
+	private static final String CONNECTION_URL="jdbc:derby:Library_01;create=true";
 	
 	//Strings to hold the commands to create the tables
-	static String createBooksTableCommand = "CREATE TABLE Books "
+	static final String CREATE_BOOKS_TABLE_COMMAND = "CREATE TABLE Books "
 			+ "("
 			+ "BookID INT NOT NULL, "
 			+ "Title VARCHAR(50), "
@@ -52,7 +52,7 @@ public class DatabaseControl {
 			+ "FOREIGN KEY (PatronID) REFERENCES Patrons(PatronID)"
 			+ ")";
 	
-	static String createPatronsTableCommand = "CREATE TABLE Patrons "
+	static final String CREATE_PATRONS_TABLE_COMMAND = "CREATE TABLE Patrons "
 			+ "("
 			+ "PatronID INT NOT NULL, "
 			+ "FName VARCHAR(25), "
@@ -70,7 +70,7 @@ public class DatabaseControl {
 	{
 		try
 		{
-			connection = DriverManager.getConnection(connectionURL); //make a connection
+			connection = DriverManager.getConnection(CONNECTION_URL); //make a connection
 		}
 		catch (SQLException e)
 		{
@@ -78,8 +78,8 @@ public class DatabaseControl {
 			e.printStackTrace();
 		}
 		
-		createTable("PATRONS", createPatronsTableCommand);
-		createTable("BOOKS", createBooksTableCommand);
+		createTable("PATRONS", CREATE_PATRONS_TABLE_COMMAND);
+		createTable("BOOKS", CREATE_BOOKS_TABLE_COMMAND);
 	}
 	
 	/**
@@ -92,7 +92,6 @@ public class DatabaseControl {
 		try
 		{
 			statement.execute(myCommand);			
-//			System.out.println("Done communicating with Database.");
 		} 
 		catch (SQLException e) 
 		{
