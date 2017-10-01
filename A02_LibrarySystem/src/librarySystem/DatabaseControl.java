@@ -24,6 +24,7 @@
 package librarySystem;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -32,21 +33,66 @@ import java.sql.Statement;
 import java.sql.Types;
 
 public class DatabaseControl {
-
-	//String with command to create/connect to a database named 'Library_02'
-	private static final String connectionURL="jdbc:derby:Library_02;create=true";
+	static Connection connection;
+	static int currentBookID=0, currentPatronID=0; //this number holds the new book and new patron ID numbers 
+	
+	//String with command to create/connect to a database named 'Library_01'
+	private static final String connectionURL="jdbc:derby:Library_01;create=true";
+	
+	//Strings to hold the commands to create the tables
+	static String createBooksTableCommand = "CREATE TABLE Books "
+			+ "("
+			+ "BookID INT NOT NULL, "
+			+ "Title VARCHAR(50), "
+			+ "Author VARCHAR(50), "
+			+ "Genre VARCHAR(15), "
+			+ "CheckedOut BOOLEAN, "
+			+ "PatronID INT, "
+			+ "PRIMARY KEY (BookID), "
+			+ "FOREIGN KEY (PatronID) REFERENCES Patrons(PatronID)"
+			+ ")";
+	
+	static String createPatronsTableCommand = "CREATE TABLE Patrons "
+			+ "("
+			+ "PatronID INT NOT NULL, "
+			+ "FName VARCHAR(25), "
+			+ "LName VARCHAR(25), "
+			+ "PRIMARY KEY(PatronID)"
+			+ ")";
+	
+	/**
+	 * Constructor creates a connection to the database
+	 * it then searches the database for the Patrons table and creates it if it doesn't exist
+	 * it then searches the database for the Books table and creates it if it doesn't exist
+	 * @throws SQLException
+	 */
+	public DatabaseControl() throws SQLException
+	{
+		try
+		{
+			connection = DriverManager.getConnection(connectionURL); //make a connection
+		}
+		catch (SQLException e)
+		{
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}
+		
+		createTable("PATRONS", createPatronsTableCommand);
+		createTable("BOOKS", createBooksTableCommand);
+	}
 	
 	/**
 	 *  connects to the database and executes an SQL command
 	 * @throws SQLException 
+	 * @param myCommand holds the SQL command to send to the database
 	 */
 	private static void dbCommunicate(String myCommand) throws SQLException {
 		Statement statement = getStatement();
 		try
 		{
-			statement.execute(myCommand);
-			
-			System.out.println("Done communicating with Database.");
+			statement.execute(myCommand);			
+//			System.out.println("Done communicating with Database.");
 		} 
 		catch (SQLException e) 
 		{
@@ -62,40 +108,53 @@ public class DatabaseControl {
 	 */
 	private static Statement getStatement() throws SQLException
 	{
-		Connection connection = DriverManager.getConnection(connectionURL); //make a connection
 		return connection.createStatement();								//Statement returned to method
-	}
-		
-	/**
-	 * creates a string that holds SQL information to create a Books table
-	 * sends that string to dbCommunicate() to execute the SQL command
-	 * @throws SQLException 
-	 */
-	public static void createBooksTable() throws SQLException
-	{
-		String myCommand = ("CREATE TABLE Books (BookID int, Title varchar(50))");
-		dbCommunicate(myCommand);
 	}
 	
 	/**
-	 * creates a string that holds SQL information to create a Patrons table
-	 * sends that string to dbCommunicate() to execute the SQL command
-	 * @throws SQLException 
+	 * Connect to database, check if the table exists, if it does not exist, send SQL command to dbCommunicate()
+	 * 
+	 * @param tableName is the name of the table to create
+	 * @param myCommand is the string value of the SQL command to create the table
 	 */
-	public static void createPatronsTable() throws SQLException
+	private static void createTable(String tableName, String myCommand)
 	{
-		String myCommand = ("CREATE TABLE Patrons (PatronID int, FName varchar(15), LName varchar(20))");
-		dbCommunicate(myCommand);
+		try
+		{
+			DatabaseMetaData dbmd = connection.getMetaData();						//get database metadata
+			ResultSet resultSet = dbmd.getTables(null, "APP", tableName, null);		//create a resultset of the metadata
+			
+			//if the resultSet has next(), then the table is already created and should not try to create a table
+			//otherwise send the SQL command to the database to create a table
+			if (!resultSet.next())
+			{
+				dbCommunicate(myCommand);	//send the SQL command to dbCommunicate()
+			}
+		}catch (SQLException e)
+		{
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}
 	}
 	
 	/**
 	 * creates a string that holds SQL command to insert Book information into Books table
 	 * sends that string to dbCommunicate() to execute the SQL command
 	 * @throws SQLException 
+	 * 
+	 * CheckedOut and PatronID are set to FALSE, and null because
+	 * a new book is inherently not checked out, and therefore does not have a Patron associated with it
 	 */
-	public static void addBook() throws SQLException
+	public static void addBook(String title, String author, String genre) throws SQLException
 	{
-		String myCommand = ("INSERT INTO Books VALUES (002, 'The Cat In The Hat')");
+		String myCommand = "INSERT INTO Books VALUES "
+							+ "("+ ++currentBookID + ", "	// BookID INT
+							+ "'"+ title +"', "				// Title VARCHAR(50)
+							+ "'"+ author +"', "			// Author VARCHAR(50)
+							+ "'"+ genre +"', "				// Genre VARCHAR(15)
+							+ "FALSE, "						// CheckedOut BOOLEAN
+							+ "null)";						// PatronID INT
+
 		dbCommunicate(myCommand);
 	}
 	
@@ -104,9 +163,12 @@ public class DatabaseControl {
 	 * sends that string to dbCommunicate() to execute the SQL command
 	 * @throws SQLException 
 	 */
-	public static void addPatron() throws SQLException
+	public static void addPatron(String fName, String lName) throws SQLException
 	{
-		String myCommand = ("INSERT INTO Patrons VALUES (1002, 'Sara', 'Dey')");
+		String myCommand = ("INSERT INTO Patrons VALUES ("
+							+ ++currentPatronID +", "
+							+ "'" + fName + "', "
+							+ "'" + lName + "')");
 		dbCommunicate(myCommand);
 	}
 
