@@ -39,6 +39,33 @@ public class DatabaseControl {
 	//String with command to create/connect to a database named 'Library_01'
 	private static final String connectionURL="jdbc:derby:Library_01;create=true";
 	
+	//Strings to hold the commands to create the tables
+	static String createBooksTableCommand = "CREATE TABLE Books "
+			+ "("
+			+ "BookID INT NOT NULL, "
+			+ "Title VARCHAR(50), "
+			+ "Author VARCHAR(50), "
+			+ "Genre VARCHAR(15), "
+			+ "CheckedOut BOOLEAN, "
+			+ "PatronID INT, "
+			+ "PRIMARY KEY (BookID), "
+			+ "FOREIGN KEY (PatronID) REFERENCES Patrons(PatronID)"
+			+ ")";
+	
+	static String createPatronsTableCommand = "CREATE TABLE Patrons "
+			+ "("
+			+ "PatronID INT NOT NULL, "
+			+ "FName VARCHAR(25), "
+			+ "LName VARCHAR(25), "
+			+ "PRIMARY KEY(PatronID)"
+			+ ")";
+	
+	/**
+	 * Constructor creates a connection to the database
+	 * it then searches the database for the Patrons table and creates it if it doesn't exist
+	 * it then searches the database for the Books table and creates it if it doesn't exist
+	 * @throws SQLException
+	 */
 	public DatabaseControl() throws SQLException
 	{
 		try
@@ -51,21 +78,21 @@ public class DatabaseControl {
 			e.printStackTrace();
 		}
 		
-		createPatronsTable();
-		createBooksTable();
+		createTable("PATRONS", createPatronsTableCommand);
+		createTable("BOOKS", createBooksTableCommand);
 	}
 	
 	/**
 	 *  connects to the database and executes an SQL command
 	 * @throws SQLException 
+	 * @param myCommand holds the SQL command to send to the database
 	 */
 	private static void dbCommunicate(String myCommand) throws SQLException {
 		Statement statement = getStatement();
 		try
 		{
-			statement.execute(myCommand);
-			
-			System.out.println("Done communicating with Database.");
+			statement.execute(myCommand);			
+//			System.out.println("Done communicating with Database.");
 		} 
 		catch (SQLException e) 
 		{
@@ -81,7 +108,6 @@ public class DatabaseControl {
 	 */
 	private static Statement getStatement() throws SQLException
 	{
-
 		return connection.createStatement();								//Statement returned to method
 	}
 	
@@ -112,44 +138,6 @@ public class DatabaseControl {
 	}
 	
 	/**
-	 * creates a string that holds SQL information to create a Books table
-	 * sends that string to createTable() to execute the SQL command
-	 * @throws SQLException 
-	 */
-	private static void createBooksTable() throws SQLException
-	{
-		String myCommand = "CREATE TABLE Books "
-						+ "("
-						+ "BookID INT NOT NULL, "
-						+ "Title VARCHAR(50), "
-						+ "Author VARCHAR(50), "
-						+ "Genre VARCHAR(15), "
-						+ "CheckedOut BOOLEAN, "
-						+ "PatronID INT,"
-						+ "PRIMARY KEY (BookID),"
-						+ "FOREIGN KEY (PatronID) REFERENCES Patrons(PatronID)"
-						+ ")";
-		createTable("BOOKS", myCommand);
-	}
-	
-	/**
-	 * creates a string that holds SQL information to create a Patrons table
-	 * sends that string to createTable() to execute the SQL command
-	 * @throws SQLException 
-	 */
-	private static void createPatronsTable() throws SQLException
-	{
-		String myCommand = "CREATE TABLE Patrons "
-						+ "("
-						+ "PatronID INT NOT NULL, "
-						+ "FName VARCHAR(25), "
-						+ "LName VARCHAR(25),"
-						+ "PRIMARY KEY(PatronID)"
-						+ ")";
-		createTable("PATRONS",myCommand);
-	}
-	
-	/**
 	 * creates a string that holds SQL command to insert Book information into Books table
 	 * sends that string to dbCommunicate() to execute the SQL command
 	 * @throws SQLException 
@@ -159,21 +147,13 @@ public class DatabaseControl {
 	 */
 	public static void addBook(String title, String author, String genre) throws SQLException
 	{
-		/*
-		 * 	"BookID INT, "
-			"Title VARCHAR(50), "
-			"Author VARCHAR(50), "
-			"Genre VARCHAR(15), "
-			"CheckedOut BOOLEAN, "
-			"PatronID INT"
-		 */
 		String myCommand = "INSERT INTO Books VALUES "
-							+ "("+ ++currentBookID + ", "
-							+ "'"+ title +"', "
-							+ "'"+ author +"', "
-							+ "'"+ genre +"', "
-							+ "FALSE, "
-							+ "null)";
+							+ "("+ ++currentBookID + ", "	// BookID INT
+							+ "'"+ title +"', "				// Title VARCHAR(50)
+							+ "'"+ author +"', "			// Author VARCHAR(50)
+							+ "'"+ genre +"', "				// Genre VARCHAR(15)
+							+ "FALSE, "						// CheckedOut BOOLEAN
+							+ "null)";						// PatronID INT
 
 		dbCommunicate(myCommand);
 	}
@@ -185,7 +165,6 @@ public class DatabaseControl {
 	 */
 	public static void addPatron(String fName, String lName) throws SQLException
 	{
-//		String myCommand = ("INSERT INTO Patrons VALUES (1002, 'Sara', 'Dey')");
 		String myCommand = ("INSERT INTO Patrons VALUES ("
 							+ ++currentPatronID +", "
 							+ "'" + fName + "', "
