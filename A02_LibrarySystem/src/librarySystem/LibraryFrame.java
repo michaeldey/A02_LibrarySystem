@@ -38,7 +38,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
-import net.miginfocom.swing.MigLayout;
+//import net.miginfocom.swing.MigLayout;									/*********/
 import javax.swing.JTabbedPane;
 import java.awt.Dimension;
 import java.awt.Insets;
@@ -128,8 +128,8 @@ public class LibraryFrame extends JFrame {
 		  JButton button_LIST_PATRONS;
 		  JButton button_CHECKOUT_RETURN_BOOK;
 		 
-		  BooksTableModel myBooksTableModel;
-		  PatronsTableModel myPatronsTableModel;
+		  BooksTableModel myBooksTableModel;								/*********/
+		  PatronsTableModel myPatronsTableModel;							/*********/
 
 		  public LibraryFrame() throws SQLException {
 			  
@@ -157,18 +157,18 @@ public class LibraryFrame extends JFrame {
 		    // Initialize and lay out window controls
 
 		    ResultSet myBooksResultSet = getContentsOfBooksTable();
-		    myBooksTableModel = new BooksTableModel(myBooksResultSet);
+		    myBooksTableModel = new BooksTableModel(myBooksResultSet);							/*********/
 		    //myBooksTableModel.addEventHandlersToRowSet(this);
 		    
 		    ResultSet myPatronsResultSet = getContentsOfPatronsTable();
-		    myPatronsTableModel = new PatronsTableModel(myPatronsResultSet);
+		    myPatronsTableModel = new PatronsTableModel(myPatronsResultSet);					/*********/
 //		    myPatronsTableModel.addEventHandlersToRowSet(this);
 
 		    tableBooks = new JTable(); // Displays the table
 		    tableBooks.setPreferredScrollableViewportSize(new Dimension(450, 200));
-		    tableBooks.setModel(myBooksTableModel);
+		    tableBooks.setModel(myBooksTableModel);												/*********/
 		    tablePatrons = new JTable();
-		    tablePatrons.setModel(myPatronsTableModel);
+		    tablePatrons.setModel(myPatronsTableModel);											/*********/
 		   
 		    label_BOOK_ID = new JLabel("Book ID:  ", JLabel.TRAILING);
 			label_TITLE = new JLabel("Title:  ", JLabel.TRAILING);
@@ -740,15 +740,15 @@ public class LibraryFrame extends JFrame {
 		  }
 
 		  private void createNewBooksTableModel() throws SQLException {
-		    myBooksTableModel = new BooksTableModel(getContentsOfBooksTable());
+		    myBooksTableModel = new BooksTableModel(getContentsOfBooksTable());								/*********/
 		    //myBooksTableModel.addEventHandlersToTableModel(this);
-		    tableBooks.setModel(myBooksTableModel);
+		    tableBooks.setModel(myBooksTableModel);															/*********/
 		  }
 		  
 		  private void createNewPatronsTableModel() throws SQLException {
-			    myPatronsTableModel = new PatronsTableModel(getContentsOfPatronsTable());
+			    myPatronsTableModel = new PatronsTableModel(getContentsOfPatronsTable());					/*********/
 			    //myPatronsTableModel.addEventHandlersToRowSet(this);
-			    tablePatrons.setModel(myPatronsTableModel);
+			    tablePatrons.setModel(myPatronsTableModel);													/*********/
 			  }
 
 		// Display the error in a dialog box.

@@ -71,6 +71,7 @@ public class DatabaseControl {
 		try
 		{
 			connection = DriverManager.getConnection(CONNECTION_URL); //make a connection
+//			connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 		}
 		catch (SQLException e)
 		{
@@ -187,13 +188,24 @@ public class DatabaseControl {
 			ResultSet resultSet = statement.executeQuery(myCommand); //send the query and store in resultSet
 			
 			ResultSetMetaData rsmd = resultSet.getMetaData(); 		//get metadata from resultSet
-			
+			int columnCount = rsmd.getColumnCount();				//number of columns in the resultSet
+						
 			//print the Header information from the resultSet query
-			for (int i = 1; i <= rsmd.getColumnCount(); i++)
+			for (int i = 1; i <= columnCount; i++)
 			{			
 				System.out.printf("%s ",rsmd.getColumnLabel(i));
 			}
 			System.out.println();
+			
+//			//get number of rows in resultSet
+//			int rowCount = 0;
+//			while(resultSet.next())
+//			{
+//				rowCount++;
+//				if (rowCount==100) break;
+//				resultSet.first();
+//			}
+			
 			
 			/**Loop through all of the returned pieces in the query
 			 * determine what data type they are, and retrieve them according to their type
