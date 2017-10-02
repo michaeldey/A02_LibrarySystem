@@ -31,13 +31,15 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseControl {
 	static Connection connection;
 	static int currentBookID=0, currentPatronID=0; //this number holds the new book and new patron ID numbers 
 	
-	//String with command to create/connect to a database named 'Library_01'
-	private static final String CONNECTION_URL="jdbc:derby:Library_01;create=true";
+	//String with command to create/connect to a database
+	private static String connectionURL;
 	
 	//Strings to hold the commands to create the tables
 	static final String CREATE_BOOKS_TABLE_COMMAND = "CREATE TABLE Books "
@@ -66,11 +68,12 @@ public class DatabaseControl {
 	 * it then searches the database for the Books table and creates it if it doesn't exist
 	 * @throws SQLException
 	 */
-	public DatabaseControl() throws SQLException
+	public DatabaseControl(String dbName) throws SQLException
 	{
+		connectionURL="jdbc:derby:" + dbName + ";create=true"; //String to create a database of the given name
 		try
 		{
-			connection = DriverManager.getConnection(CONNECTION_URL); //make a connection
+			connection = DriverManager.getConnection(connectionURL); //make a connection
 //			connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 		}
 		catch (SQLException e)
@@ -130,6 +133,7 @@ public class DatabaseControl {
 			{
 				dbCommunicate(myCommand);	//send the SQL command to dbCommunicate()
 			}
+			//todo add else statement to eliminate database count problems
 		}catch (SQLException e)
 		{
 			System.out.println(e.getMessage());
@@ -175,16 +179,19 @@ public class DatabaseControl {
 	/**
 	 * This method takes a String which is an SQL command and makes
 	 * the query to the database
-	 * It then displays the information in the returned statement
+	 * It then returns the query as a 2 diminsional Array of Strings
 	 * 
 	 * @param myCommand is a String representation of an SQL Command
 	 * @throws SQLException when connection to database is incorrect
+	 * @return String[][] returnString
 	 */
-	public static void showAllFromQuery(String myCommand) throws SQLException
+	public static String[][] showAllFromQuery(String myCommand) throws SQLException
 	{
 		Statement statement = getStatement();	//get statement block from SQL Database
+		String[][] returnString;
 		try
 		{
+			List<String> resultsList = new ArrayList<String>();			//ArrayList to hold the resultSet values as Strings
 			ResultSet resultSet = statement.executeQuery(myCommand); //send the query and store in resultSet
 			
 			ResultSetMetaData rsmd = resultSet.getMetaData(); 		//get metadata from resultSet
@@ -195,17 +202,7 @@ public class DatabaseControl {
 			{			
 				System.out.printf("%s ",rsmd.getColumnLabel(i));
 			}
-			System.out.println();
-			
-//			//get number of rows in resultSet
-//			int rowCount = 0;
-//			while(resultSet.next())
-//			{
-//				rowCount++;
-//				if (rowCount==100) break;
-//				resultSet.first();
-//			}
-			
+			System.out.println();			
 			
 			/**Loop through all of the returned pieces in the query
 			 * determine what data type they are, and retrieve them according to their type
@@ -213,31 +210,55 @@ public class DatabaseControl {
 			int type;
 			while(resultSet.next())								//loop through each piece of data
 			{
-				for (int i = 1; i<=rsmd.getColumnCount();i++) 	//loop through each column the data is in
+				for (int i = 1; i<=columnCount;i++) 	//loop through each column the data is in
 				{
 					type = rsmd.getColumnType(i);				//get the data type for the column
 					
 					if(type == Types.VARCHAR || type == Types.CHAR)			//type is a String or char
 					{
-						System.out.print(resultSet.getString(i)+" ");
+						resultsList.add(resultSet.getString(i));
+//						System.out.print(resultSet.getString(i)+" ");
 					}
 					else if (type == Types.BOOLEAN)							//type is a Boolean
 					{
-						System.out.print(resultSet.getBoolean(i)+" ");
+						resultsList.add(String.valueOf(resultSet.getBoolean(i)));
+//						System.out.print(resultSet.getBoolean(i)+" ");
 					}
 					else													//type is an int
 					{
-						System.out.print(resultSet.getInt(i)+" ");
+						resultsList.add(String.valueOf(resultSet.getInt(i)));
+//						System.out.print(resultSet.getInt(i)+" ");
 					}
 				}
-				System.out.println();
 			}
-
+			
+			//create a 2D array to return to the GUI
+			returnString = new String[(resultsList.size()/columnCount)][columnCount];
+			int ptr = 0;
+			for (int i = 0; i < (resultsList.size()/columnCount); i++)
+			{
+				for (int j = 0; j < columnCount; j++)
+				{
+					returnString[i][j] = resultsList.get(ptr++);
+				}
+			}
+			
+			//print the 2D array to make sure it works
+			for (int i = 0; i < returnString.length; i++)
+			{
+				for (int j = 0; j < returnString[0].length; j++)
+				{
+					System.out.print(returnString[i][j] + " ");
+				}
+				System.out.println();
+			}			
 		}
 		catch (SQLException e) 
 		{
 			System.out.println(e.getMessage());
 			e.printStackTrace();
+			returnString = new String[][] {{null,null}};//returnString does not return a value
 		}
-	}
+		return returnString;
+	}//end of ShowAllFromQuery
 }
