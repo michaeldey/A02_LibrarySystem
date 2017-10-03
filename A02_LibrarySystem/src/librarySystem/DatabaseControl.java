@@ -46,7 +46,8 @@ public class DatabaseControl {
 			+ "("
 			+ "BookID INT NOT NULL, "
 			+ "Title VARCHAR(50), "
-			+ "Author VARCHAR(50), "
+			+ "AuthorFirst VARCHAR(25), "
+			+ "AuthorLast VARCHAR(25), "
 			+ "Genre VARCHAR(15), "
 			+ "CheckedOut BOOLEAN, "
 			+ "PatronID INT, "
@@ -149,12 +150,13 @@ public class DatabaseControl {
 	 * CheckedOut and PatronID are set to FALSE, and null because
 	 * a new book is inherently not checked out, and therefore does not have a Patron associated with it
 	 */
-	public static void addBook(String title, String author, String genre) throws SQLException
+	public static void addBook(String title, String authorFirst, String authorLast, String genre) throws SQLException
 	{
 		String myCommand = "INSERT INTO Books VALUES "
 							+ "("+ ++currentBookID + ", "	// BookID INT
 							+ "'"+ title +"', "				// Title VARCHAR(50)
-							+ "'"+ author +"', "			// Author VARCHAR(50)
+							+ "'"+ authorFirst +"', "		// AuthorFirst VARCHAR(25)
+							+ "'"+ authorLast +"', "		// AuthorLast VARCHAR(25)
 							+ "'"+ genre +"', "				// Genre VARCHAR(15)
 							+ "FALSE, "						// CheckedOut BOOLEAN
 							+ "null)";						// PatronID INT
