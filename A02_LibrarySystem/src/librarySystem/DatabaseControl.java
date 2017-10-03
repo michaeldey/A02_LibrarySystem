@@ -262,16 +262,7 @@ public class DatabaseControl {
 					returnString[i][j] = resultsList.get(ptr++);
 				}
 			}
-			
-			//print the 2D array to make sure it works
-//			for (int i = 0; i < returnString.length; i++)
-//			{
-//				for (int j = 0; j < returnString[0].length; j++)
-//				{
-//					System.out.print(returnString[i][j] + " ");
-//				}
-//				System.out.println();
-//			}			
+					
 		}
 		catch (SQLException e) 
 		{
@@ -281,4 +272,52 @@ public class DatabaseControl {
 		}
 		return returnString;
 	}//end of ShowAllFromQuery
+	
+	/**
+	 * finds book in database, sets it's CheckedOut to True, and adds the PatronID who has it checked out
+	 * @param title - title of the book
+	 * @param patronFirst - Patron's first name
+	 * @param patronLast - Patron's last name
+	 * @throws SQLException
+	 */
+	public static void checkOutBookByNames(String title, String patronFirst, String patronLast) throws SQLException
+	{
+		String myCommand = 	"UPDATE BOOKS "
+				+ "SET CheckedOut = TRUE, "
+				+ "PatronID = (SELECT PatronID FROM PATRONS WHERE FName='"+ patronFirst +"' AND LName = '"+ patronLast +"')"
+				+ "WHERE Title = '"+ title +"'";
+
+		dbCommunicate(myCommand);
+	}
+	
+	/**
+	 * finds book in database, sets it's CheckedOut to True, and adds the PatronID who has it checked out
+	 * @param bookID
+	 * @param patronID
+	 * @throws SQLException
+	 */
+	public static void checkOutBookByIDs(String bookID, String patronID) throws SQLException
+	{
+		String myCommand = 	"UPDATE BOOKS "
+				+ "SET CheckedOut = TRUE, "
+				+ "PatronID = " + patronID
+				+ "WHERE BookID = "+ bookID;
+
+		dbCommunicate(myCommand);
+	}
+	
+	/**
+	 * Finds a book in database, sets it's CheckedOut to False, removes the PatronID information
+	 * @param bookID
+	 * @throws SQLException
+	 */
+	public static void checkInBookByIDs(String bookID) throws SQLException
+	{
+		String myCommand = 	"UPDATE BOOKS "
+				+ "SET CheckedOut = FALSE, "
+				+ "PatronID = null "
+				+ "WHERE BookID = "+ bookID;
+
+		dbCommunicate(myCommand);
+	}
 }

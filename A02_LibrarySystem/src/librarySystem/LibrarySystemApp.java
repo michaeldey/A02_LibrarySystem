@@ -13,29 +13,50 @@ public class LibrarySystemApp {
 //		db.addBook("Green Eggs and Ham", "Dr.","Seusse", "Kids");
 //		db.addBook("Cat In The Hat", "Dr.","Seusse", "Kids");
 //		db.addBook("The Art of Peace", "Morihei","Ueshiba", "Self Help");	
-		db.addBook("The Martian", "Andy","Wier", "Self Help");
+//		db.addBook("The Martian", "Andy","Wier", "Self Help");
 //		db.addPatron("Mike", "Dey");
 //		db.addPatron("Lisa", "Hammond");
 //		db.addPatron("John", "Smith");
-		db.addPatron("David", "Sedaris");
+//		db.addPatron("David", "Sedaris");
 		
-//		System.out.println("All books:");
-//		db.showAllFromQuery("SELECT * FROM Books");
-//		
+//		db.checkOutBookByNames("Hop On Pop", "John", "Smith");
+//		db.checkOutBookByIDs("1", "3");
+		
+		db.checkInBookByIDs("3");
+		
+		System.out.println("All books:");
+		String[][] allBooks = db.showAllFromQuery("SELECT * FROM Books");
+		
+		for (int i = 0; i < allBooks.length; i++)
+		{
+			for (int j = 0; j < allBooks[0].length; j++)
+			{
+				System.out.print(allBooks[i][j] + " ");
+			}
+			System.out.println();
+		}
+		
 //		System.out.println("Children's books:");
 //		db.showAllFromQuery("SELECT * FROM Books WHERE GENRE='Kids' ORDER BY Title");
-//		
-//		System.out.println();
-//
-//		
-//		System.out.println("All Patrons:");
-//		db.showAllFromQuery("SELECT * FROM Patrons");
 		
-		String[][] getPatronSize = db.showAllFromQuery("SELECT COUNT(PatronID) FROM Patrons");
-		System.out.println(getPatronSize[0][0]);
-		
-		String[][] getBookSize = db.showAllFromQuery("SELECT COUNT(BookID) FROM Books");
-		System.out.println(getBookSize[0][0]);
-	}
+		System.out.println();
 
+		
+		System.out.println("All Patrons:");
+		String[][] allPatrons = db.showAllFromQuery("SELECT * FROM Patrons");
+		for (int i = 0; i < allPatrons.length; i++)
+		{
+			for (int j = 0; j < allPatrons[0].length; j++)
+			{
+				System.out.print(allPatrons[i][j] + " ");
+			}
+			System.out.println();
+		}
+		
+//		String[][] getPatronSize = db.showAllFromQuery("SELECT COUNT(PatronID) FROM Patrons");
+//		System.out.println(getPatronSize[0][0]);
+//		
+//		String[][] getBookSize = db.showAllFromQuery("SELECT COUNT(BookID) FROM Books");
+//		System.out.println(getBookSize[0][0]);
+	}
 }
