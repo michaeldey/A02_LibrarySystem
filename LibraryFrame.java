@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -21,12 +22,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 
-import javax.sql.rowset.RowSetProvider;  
-
-import javax.sql.RowSetEvent;
-import javax.sql.RowSetListener;
-import javax.sql.rowset.CachedRowSet;
-import javax.sql.rowset.JdbcRowSet;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -38,12 +33,16 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.TableModelEvent;
+import javax.swing.event.TableModelListener;
+import javax.swing.table.TableModel;
+
 import net.miginfocom.swing.MigLayout;
 import javax.swing.JTabbedPane;
 import java.awt.Dimension;
 import java.awt.Insets;
 
-public class LibraryFrame extends JFrame {
+public class LibraryFrame extends JFrame implements TableModelListener {
 
 		private JPanel contentPane;
 		
@@ -59,8 +58,9 @@ public class LibraryFrame extends JFrame {
 		private JPanel addPatronCard;
 		static char selection;
 		Connection connection;
+		static int currentBookID=0, currentPatronID=0;
 		
-		private static final String connectionURL="jdbc:derby:Library_02;create=true";
+		private static final String connectionURL="jdbc:derby:Library_07;create=true";
 
 	/**
 	 * Launch the application.
@@ -93,6 +93,7 @@ public class LibraryFrame extends JFrame {
 		  JLabel label_AUTHOR_LAST;
 		  JLabel label_GENRE;
 		  JLabel label_CHECKED_OUT;
+		  JLabel label_PATRON_ID_BOOKS;
 		  JLabel addBook;
 		  JLabel check_ret;
 		  		  
@@ -111,6 +112,7 @@ public class LibraryFrame extends JFrame {
 		  JTextField textField_AUTHOR_LAST;
 		  JTextField textField_GENRE;
 		  JTextField textField_CHECKED_OUT;
+		  JTextField textField_PATRON_ID_BOOKS;
 		  
 		  JTextField textField_PATRON_ID;
 		  JTextField textField_PATRON_FIRST;
@@ -134,10 +136,7 @@ public class LibraryFrame extends JFrame {
 		  public LibraryFrame() throws SQLException {
 			  
 		    super("Library System"); // Set window title
-		    
-
-		    DatabaseControl db = new DatabaseControl();
-			
+		    	
 		    // Close connections exit the application when the user
 		    // closes the window
 
@@ -158,7 +157,7 @@ public class LibraryFrame extends JFrame {
 
 		    ResultSet myBooksResultSet = getContentsOfBooksTable();
 		    myBooksTableModel = new BooksTableModel(myBooksResultSet);
-		    //myBooksTableModel.addEventHandlersToRowSet(this);
+		    myBooksTableModel.addTableModelListener(this);
 		    
 		    ResultSet myPatronsResultSet = getContentsOfPatronsTable();
 		    myPatronsTableModel = new PatronsTableModel(myPatronsResultSet);
@@ -181,6 +180,7 @@ public class LibraryFrame extends JFrame {
 			check_ret = new JLabel("Checkout or Return a Book", JLabel.CENTER);
 			  
 			label_PATRON_ID = new JLabel("Patron ID:  ", JLabel.TRAILING);
+			label_PATRON_ID_BOOKS = new JLabel("Patron ID:   ", JLabel.TRAILING);
 			label_PATRON_FIRST = new JLabel("Patron's First Name:  ", JLabel.TRAILING);
 			label_PATRON_LAST = new JLabel("Patron's Last Name:  ", JLabel.TRAILING);
 			label_PATRON_FIRST2 = new JLabel("Patron's First Name:  ", JLabel.TRAILING);
@@ -197,6 +197,7 @@ public class LibraryFrame extends JFrame {
 			textField_CHECKED_OUT = new JTextField();
 			  
 			textField_PATRON_ID = new JTextField();
+			textField_PATRON_ID_BOOKS = new JTextField();
 			textField_PATRON_FIRST = new JTextField();
 			textField_PATRON_LAST = new JTextField();
 			textField_PATRON_FIRST2 = new JTextField();
@@ -236,7 +237,7 @@ public class LibraryFrame extends JFrame {
 			button_LIST_PATRONS.setText("List All Patrons");
 			button_CHECKOUT_RETURN_BOOK.setText("Checkout or Return Book");
 			
-		    // Place the components within the container contentPane; use GridBagLayout
+		    // Place the components within the tabbedPane; use GridBagLayout
 		    // as the layout.
 					    
 		    JTabbedPane tabbedPane = new JTabbedPane();
@@ -400,7 +401,7 @@ public class LibraryFrame extends JFrame {
 		    cf.weightx = 0.25;
 		    cf.weighty = 0;
 		    cf.gridx = 3;
-		    cf.gridy = 4;
+		    cf.gridy = 5;
 		    //cf.gridwidth = 1;
 		    firstCard.add(checkout, cf);
 		    
@@ -409,7 +410,7 @@ public class LibraryFrame extends JFrame {
 		    cf.weightx = 0.25;
 		    cf.weighty = 0;
 		    cf.gridx = 3;
-		    cf.gridy = 4;
+		    cf.gridy = 5;
 		    //cf.gridwidth = 1;
 		    firstCard.add(ret, cf);
 		    
@@ -447,6 +448,24 @@ public class LibraryFrame extends JFrame {
 		    cf.gridx = 2;
 		    cf.gridy = 2;
 		    cf.gridwidth = 1;
+		    firstCard.add(label_PATRON_ID_BOOKS, cf);
+		    
+		    cf.fill = GridBagConstraints.HORIZONTAL;
+		    cf.anchor = GridBagConstraints.LINE_END;
+		    cf.weightx = 0.25;
+		    cf.weighty = 0;
+		    cf.gridx = 3;
+		    cf.gridy = 2;
+		    cf.gridwidth = 1;
+		    firstCard.add(textField_PATRON_ID_BOOKS, cf);
+		    
+		    cf.fill = GridBagConstraints.HORIZONTAL;
+		    cf.anchor = GridBagConstraints.LINE_END;
+		    cf.weightx = 0.25;
+		    cf.weighty = 0;
+		    cf.gridx = 2;
+		    cf.gridy = 3;
+		    cf.gridwidth = 1;
 		    firstCard.add(label_PATRON_FIRST, cf);
 
 		    cf.fill = GridBagConstraints.HORIZONTAL;
@@ -454,7 +473,7 @@ public class LibraryFrame extends JFrame {
 		    cf.weightx = 0.75;
 		    cf.weighty = 0;
 		    cf.gridx = 3;
-		    cf.gridy = 2;
+		    cf.gridy = 3;
 		    cf.gridwidth = 1;
 		    firstCard.add(textField_PATRON_FIRST, cf);
 
@@ -463,7 +482,7 @@ public class LibraryFrame extends JFrame {
 		    cf.weightx = 0.25;
 		    cf.weighty = 0;
 		    cf.gridx = 2;
-		    cf.gridy = 3;
+		    cf.gridy = 4 ;
 		    cf.gridwidth = 1;
 		    firstCard.add(label_PATRON_LAST, cf);
 
@@ -472,7 +491,7 @@ public class LibraryFrame extends JFrame {
 		    cf.weightx = 0.75;
 		    cf.weighty = 0;
 		    cf.gridx = 3;
-		    cf.gridy = 3;
+		    cf.gridy = 4;
 		    cf.gridwidth = 1;
 		    firstCard.add(textField_PATRON_LAST, cf);
 		    
@@ -588,6 +607,25 @@ public class LibraryFrame extends JFrame {
 		    
 		    // Add listeners for the buttons in the application
 
+		    
+		    
+		    
+		    tableBooks.getModel().addTableModelListener(new TableModelListener(){
+		    	 public void tableChanged(TableModelEvent e) {
+			        
+//		    		 fireTableDataChanged();
+		    		 
+		    		 
+		    		 // int row = e.getFirstRow();
+//				        int column = e.getColumn();
+//				        TableModel model = (TableModel)e.getSource();
+//				        String columnName = model.getColumnName(column);
+//				        Object data = model.getValueAt(row, column);
+				        
+				        	        
+				  }
+		    });
+		    
 		    button_ADD_BOOK.addActionListener(new ActionListener() {
 
 		        public void actionPerformed(ActionEvent e) {
@@ -600,49 +638,89 @@ public class LibraryFrame extends JFrame {
 		                "Author's Last Name: [" + textField_AUTHOR_LAST.getText() + "]",
 		                "Genre: [" + textField_GENRE.getText() + "]" });
 		          
-		          System.out.printf("%d %s %s %s %s %b", Integer.parseInt(textField_BOOK_ID.getText().trim()), 
-		        		  textField_TITLE.getText(), textField_AUTHOR_FIRST.getText(), textField_AUTHOR_LAST.getText(), 
-		        		  textField_GENRE.getText().trim(), false);
+		          System.out.printf( "%s %s %s %s %b %n", textField_TITLE.getText(), textField_AUTHOR_FIRST.getText(), textField_AUTHOR_LAST.getText(), 
+		        		  textField_GENRE.getText().trim(), false); //Integer.parseInt(textField_BOOK_ID.getText().trim())
 
+		          Statement stmt = null;
 		          try {
 
-		        	  DatabaseControl db = new DatabaseControl();
+		        	  DatabaseControl db = new DatabaseControl("Library_05");
 					  connection = DriverManager.getConnection(connectionURL);
-					  Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+					  stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+					  ResultSet rs = getContentsOfBooksTable();
+					  
+					  db.addBook(
+							  textField_TITLE.getText(),
+                              textField_AUTHOR_FIRST.getText(),
+                              textField_AUTHOR_LAST.getText(),
+                              textField_GENRE.getText().trim()
+					  		);
+					  
+					  
+					  
+					  
+					  
+					  //myBooksTableModel.fireTableDataChanged();
+					  
+					  					  
+//					  boolean updatable = ((DatabaseMetaData) rsmd).supportsResultSetConcurrency(ResultSet.TYPE_FORWARD_ONLY,
+//						        ResultSet.CONCUR_UPDATABLE);
+//
+//						    System.out.println("Updatable ResultSet supported = " + updatable);
+					 
 //		        	  String myCommand = ("INSERT INTO Books VALUES" + 
-//		  					"(Integer.parseInt(textField_BOOK_ID.getText().trim())," + 
+//		  					"(currentBookID++)," + 
 //		        			"textField_TITLE.getText()," + 
 //		  					"textField_AUTHOR_FIRST.getText()," + 
 //		        			"textField_AUTHOR_LAST.getText()," +
 //		  					"textField_GENRE.getText()," +
-//		        			"false)");
-//					  
+//		        			"false, null"));
+					  							  
 //		        	  //DatabaseControl.dbCommunicate(myCommand);
 //		        	  stmt.executeQuery(myCommand);
 		        	  
-//		        			  
-//		        			  myBooksTableModel.insertRow(Integer.parseInt(textField_BOOK_ID.getText().trim()),
+//						    con = DriverManager.getConnection(
+//						            "jdbc:derby://localhost/TestDB");
+//						          Statement sta = con.createStatement(); 
+
+						    // insert 3 rows
+//						          int count = 0;
+//						          int c = sta.executeUpdate("INSERT INTO HY_Address"
+//						            + " (ID, StreetName, City)"
+//						            + " VALUES (1, '5 Baker Road', 'Bellevue')");
+//						          count = count + c;
+						    
+						    
+//		        			  myBooksTableModel.insertRow(currentBookID++,
 //		            							  textField_TITLE.getText(),
 //		                                          textField_AUTHOR_FIRST.getText(),
 //		                                          textField_AUTHOR_LAST.getText(),
 //		                                          textField_GENRE.getText().trim(),
-//		                                          Boolean.parseBoolean(textField_CHECKED_OUT.getText().trim()));
+//		                                          false, 0);
 		        	  
-		        	  ResultSet rs = getContentsOfBooksTable();
-		        	  rs.moveToInsertRow(); // moves cursor to the insert row
-		              rs.updateInt(1, Integer.parseInt(textField_BOOK_ID.getText().trim())); // updates the
-		                 // first column of the insert row 
-		              rs.updateString(2, textField_TITLE.getText()); // updates the second column
-		              rs.updateString(3, textField_AUTHOR_FIRST.getText()); 
-		              rs.updateString(4, textField_AUTHOR_LAST.getText()); 
-		              rs.updateString(5, textField_GENRE.getText().trim()); 
-		              rs.updateBoolean(6, false); // updates the sixth column to false
-		              rs.insertRow();
-		              rs.moveToCurrentRow();
-		              rs = stmt.executeQuery("SELECT * FROM Books");
+//		        	 
+//		        	  rs.moveToInsertRow(); // moves cursor to the insert row
+//		              rs.updateInt(1, Integer.parseInt(textField_BOOK_ID.getText().trim())); // updates the
+//		                 // first column of the insert row 
+//		              rs.updateString(2, textField_TITLE.getText()); // updates the second column
+//		              rs.updateString(3, textField_AUTHOR_FIRST.getText()); 
+//		              rs.updateString(4, textField_AUTHOR_LAST.getText()); 
+//		              rs.updateString(5, textField_GENRE.getText().trim()); 
+//		              rs.updateBoolean(6, false); // updates the sixth column to false
+//		              rs.insertRow();
+//		              rs.moveToCurrentRow();
+		             // rs = stmt.executeQuery("SELECT * FROM Books");
 		        	  
 		          } catch (SQLException sqle) {
 		            displaySQLExceptionDialog(sqle);
+		          }
+		          finally {
+		        	  if (stmt != null) { try {
+						stmt.close();
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} }
 		          }
 		        }
 		      });
@@ -657,7 +735,6 @@ public class LibraryFrame extends JFrame {
 		    }
 		    
 	      });
-		    
 		    
 //		    button_LIST_PATRONS.addActionListener(new ActionListener() {
 //
@@ -682,41 +759,71 @@ public class LibraryFrame extends JFrame {
 		    button_UPDATE_BOOKS_DATABASE.addActionListener(new ActionListener() {
 
 		        public void actionPerformed(ActionEvent e) {
+		        	DatabaseControl db;
+					try {
+						db = new DatabaseControl("Library_07");
+						myBooksTableModel.tableChanged(new TableModelEvent(myBooksTableModel));
+						//db.showAllFromQuery("SELECT * FROM BOOKS");
+						myBooksTableModel = new BooksTableModel(myBooksTableModel.getbooksResultSet());
+						//myBooksTableModel.setValueAt(myBooksResultSet, TableModelEvent.INSERT, TableModelEvent.ALL_COLUMNS);
+						tableBooks.setModel(myBooksTableModel);
+						repaint();
+						
+						//myBooksTableModel.fireTableChanged(new TableModelEvent(myBooksTableModel));
+						//tableBooks = new JTable();
+						
+						
+//						c.fill = GridBagConstraints.BOTH;
+//					    c.anchor = GridBagConstraints.NORTH;
+//					    c.weightx = 0.5;
+//					    c.weighty = 1.0;
+//					    c.gridx = 0;
+//					    c.gridy = 0;
+//					    c.gridwidth = 4;
+//					    panel1.add(new JScrollPane(tableBooks), c);
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+		        }
+		      });
+		  
+		  
+		  button_LIST_ALL_BOOKS.addActionListener(new ActionListener() {
+
+		        public void actionPerformed(ActionEvent e) {
 		          try {
-		        	  DatabaseControl db = new DatabaseControl();
+		        	  DatabaseControl db = new DatabaseControl("Library_07");
 					  connection = DriverManager.getConnection(connectionURL);
-					  Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+					  Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 		                      				
-					  ResultSet rs = stmt.executeQuery("SELECT * FROM Books");
-					  	
+					  ResultSet rs = stmt.executeQuery("SELECT * FROM BOOKS");
+					  createNewBooksTableModel();
 					  
-		        	  
-//		        	  ResultSet rs = getContentsOfBooksTable();
-//		        	  rs.moveToInsertRow(); // moves cursor to the insert row
-//		              rs.updateInt(1, 1005); // updates the
-//		                 // first column of the insert row to be AINSWORTH
-//		              rs.updateString(2, "The Stranger"); // updates the second column to be 35
-//		              rs.updateString(3, "Albert"); 
-//		              rs.updateString(4, "Camus"); 
-//		              rs.updateString(5, "20th Century"); 
-//		              rs.updateBoolean(6, false); // updates the sixth column to true
-//		              rs.insertRow();
-//		              rs.moveToCurrentRow();
-		          } catch (SQLException sqle) {
+//					  ResultSet myBooksResultSet = getContentsOfBooksTable();
+//					  myBooksTableModel = new BooksTableModel(myBooksResultSet);
+//					  JTable tableBooks = new JTable(); // Displays the table
+//					  tableBooks.setPreferredScrollableViewportSize(new Dimension(450, 200));
+//					  tableBooks.setModel(myBooksTableModel);
+					  
+					  c.fill = GridBagConstraints.BOTH;
+					   c.anchor = GridBagConstraints.NORTH;
+					    c.weightx = 0.5;
+					    c.weighty = 1.0;
+					    c.gridx = 0;
+					    c.gridy = 0;
+					    c.gridwidth = 4;
+					    panel1.add(new JScrollPane(tableBooks), c);
+					  	
+					 } catch (SQLException sqle) {
 		            displaySQLExceptionDialog(sqle);
-		            // Now revert back changes
-		            try {
-		              createNewBooksTableModel();
-		            } catch (SQLException sqle2) {
-		              displaySQLExceptionDialog(sqle2);
-		            }
+		            
 		          }
 		        }
 		      });
-		  }
+		  } 
 		  
-
-//		    button_ADD_PATRON.addActionListener(new ActionListener() {
+		 // button_ADD_PATRON.addActionListener(new ActionListener() {
 //		        public void actionPerformed(ActionEvent e) {
 //		          try {
 //		            createNewPatronsTableModel();
@@ -741,7 +848,7 @@ public class LibraryFrame extends JFrame {
 
 		  private void createNewBooksTableModel() throws SQLException {
 		    myBooksTableModel = new BooksTableModel(getContentsOfBooksTable());
-		    //myBooksTableModel.addEventHandlersToTableModel(this);
+		    myBooksTableModel.addTableModelListener(this);
 		    tableBooks.setModel(myBooksTableModel);
 		  }
 		  
@@ -755,25 +862,30 @@ public class LibraryFrame extends JFrame {
 
 	      
 		  public ResultSet getContentsOfBooksTable() throws SQLException {
-			  DatabaseControl db = new DatabaseControl();
-			  connection = DriverManager.getConnection(connectionURL);
-			  Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			  ResultSet rs = null;
+			    try {
+			    	DatabaseControl db = new DatabaseControl("Library_07");
+			    	connection = DriverManager.getConnection(connectionURL);
+			    	Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
                       				
-			  ResultSet rs = stmt.executeQuery("select BOOKS_ID, TITLE, AUTHOR_FIRST, AUTHOR_LAST, GENRE, CHECKED_OUT from Books");
-			  	
+			    	rs = stmt.executeQuery("select * from BOOKS");
+			  
+			    } catch (SQLException e) {
+			        System.out.println(e);
+			      }
 			  return rs;
 		  }
 		
 		  public ResultSet getContentsOfPatronsTable() throws SQLException {
-			  DatabaseControl db = new DatabaseControl();
+			  DatabaseControl db = new DatabaseControl("Library_07");
 			  connection = DriverManager.getConnection(connectionURL);
-			  Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			  Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
                   				
-			  ResultSet rs = stmt.executeQuery("select * from Patrons");
+			  ResultSet rs = stmt.executeQuery("select * from PATRONS");
 		  	
 		  return rs;
 	  }
-			      
+		 
 		  protected JComponent makeTextPanel(String text) {
 		        JPanel panel = new JPanel(false);
 		        JLabel filler = new JLabel(text);
@@ -804,53 +916,86 @@ public class LibraryFrame extends JFrame {
 //			  }
 
 		  
-		  
-
-		  
-
-//		  public void rowInsert(RowSetEvent event) {
-//
-//			  ResultSet rs = this.myBooksTableModel.booksResultSet;
-//			  rs.moveToInsertRow(); // moves cursor to the insert row
-//		      rs.updateString(1, "AINSWORTH"); // updates the
-//		          // first column of the insert row to be AINSWORTH
-//		       rs.updateInt(2,35); // updates the second column to be 35
-//		       rs.updateBoolean(3, true); // updates the third column to true
-//		       rs.insertRow();
-//		       rs.moveToCurrentRow();
+		  		  		  
+		  public abstract class FilterDatabaseMetaData implements DatabaseMetaData
+		  	  {
+		      protected DatabaseMetaData inner;
+		     
+		      //System.out.println(supportsResultSetConcurrency(TYPE_SCROLL_SENSITIVE, CONCUR_UPDATABLE));
+		     
+		      
+		      public FilterDatabaseMetaData(DatabaseMetaData inner)
+		      { this.inner = inner; }
+		      
+		      public FilterDatabaseMetaData()
+		      {}
+		      
+		      public void setInner( DatabaseMetaData inner )
+		      { this.inner = inner; }
+		      
+		      public DatabaseMetaData getInner()
+		      { return inner; }
+//			  
+		      public String getDriverName() throws SQLException
+		         { return inner.getDriverName(); }
+//			  
+		      public boolean supportsResultSetConcurrency(int type, int concurrency) throws SQLException {
+				 return inner.supportsResultSetConcurrency(type, concurrency);
+			 }
 			  
-			 
 
-//		    try {
-//		      currentRowSet.moveToCurrentRow();
-//		      myBooksTableModel =
-//		        new BooksTableModel(myBooksTableModel.getBooksRowSet());
-//		      table.setModel(myBooksTableModel);
+		  	  }
+//when does the table model change?
+		  
+//		  public void tableChanged(TableModelEvent e)
+//		    {
+//		        if (e.getType() == TableModelEvent.UPDATE)
+//		        {
+//		            int row = e.getFirstRow();
+//		            int column = e.getColumn();
 //
-//		    } catch (SQLException ex) {
+//		            if (column == 1 || column == 2)
+//		            {
+//		                TableModel model = (TableModel)e.getSource();
+//		                int quantity = ((Integer)model.getValueAt(row, 1)).intValue();
+//		                double price = ((Double)model.getValueAt(row, 2)).doubleValue();
+//		                Double value = new Double(quantity * price);
+//		                model.setValueAt(value, row, 3);
+//		            }
+//		        }
+//		    }
 
-		      //JDBCTutorialUtilities.printSQLException(ex);
-//		  JOptionPane.showMessageDialog(
-//			        LibraryFrame.this,
-//			        new String[] { // Display a 2-line message
-//			          ex.getClass().getName() + ": ",
-//			          ex.getMessage()
-//			        }
-//			      );
-//			    }
-//		      
-		  
+		@Override
+		public void tableChanged(TableModelEvent e) {
+			 //ResultSet rs = this.myBooksTableModel.booksResultSet;
+			 
+			 try {
+				 if (button_UPDATE_BOOKS_DATABASE.isSelected()) {
+				 myBooksTableModel = new BooksTableModel(myBooksTableModel.getbooksResultSet());
+				 tableBooks.setModel(myBooksTableModel);
+				 this.tableChanged(e);
+				 }
+			 		} catch (SQLException ex) {
+				 
+			 	System.out.println(ex);
+			 		
+			 // Display the error in a dialog box.
+			 	
+			 	JOptionPane.showMessageDialog(
+				        LibraryFrame.this,
+				        new String[] { // Display a 2-line message
+				        	ex.getClass().getName() + ": ",
+						    ex.getMessage()
 
-		  public void cursorMoved(RowSetEvent event) {  }
-
-		  
-//			  
-//			  
-//			  
-//			  
-
+				      
+				        }
+				      );
+				    }
+			 }
+		}
 		
-	}
+		
+	
 
 	
 	
