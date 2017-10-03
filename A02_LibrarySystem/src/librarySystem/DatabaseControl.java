@@ -134,7 +134,25 @@ public class DatabaseControl {
 			{
 				dbCommunicate(myCommand);	//send the SQL command to dbCommunicate()
 			}
-			//todo add else statement to eliminate database count problems
+			/**If the Database Tables have already been created,
+			 * currentPatronID and currentBookId counts will be inaccurate on Class creation
+			 * This gets an accurate count of what is in the PATRONS and BOOKS tables and
+			 * adjusts the currentPatronID and currentBookID numbers so they are accurate when
+			 * adding to their respective tables
+			 */
+			else
+			{
+				if (tableName.equals("PATRONS"))
+				{
+					String[][] getPatronSize = showAllFromQuery("SELECT COUNT(PatronID) FROM Patrons");
+					currentPatronID = Integer.parseInt(getPatronSize[0][0]);
+				}
+				else if (tableName.equals("BOOKS"))
+				{					
+					String[][] getBookSize = showAllFromQuery("SELECT COUNT(BookID) FROM Books");
+					currentBookID = Integer.parseInt(getBookSize[0][0]);
+				}
+			}
 		}catch (SQLException e)
 		{
 			System.out.println(e.getMessage());
@@ -199,12 +217,12 @@ public class DatabaseControl {
 			ResultSetMetaData rsmd = resultSet.getMetaData(); 		//get metadata from resultSet
 			int columnCount = rsmd.getColumnCount();				//number of columns in the resultSet
 						
-			//print the Header information from the resultSet query
-			for (int i = 1; i <= columnCount; i++)
-			{			
-				System.out.printf("%s ",rsmd.getColumnLabel(i));
-			}
-			System.out.println();			
+//			//print the Header information from the resultSet query
+//			for (int i = 1; i <= columnCount; i++)
+//			{			
+//				System.out.printf("%s ",rsmd.getColumnLabel(i));
+//			}
+//			System.out.println();			
 			
 			/**Loop through all of the returned pieces in the query
 			 * determine what data type they are, and retrieve them according to their type
@@ -246,14 +264,14 @@ public class DatabaseControl {
 			}
 			
 			//print the 2D array to make sure it works
-			for (int i = 0; i < returnString.length; i++)
-			{
-				for (int j = 0; j < returnString[0].length; j++)
-				{
-					System.out.print(returnString[i][j] + " ");
-				}
-				System.out.println();
-			}			
+//			for (int i = 0; i < returnString.length; i++)
+//			{
+//				for (int j = 0; j < returnString[0].length; j++)
+//				{
+//					System.out.print(returnString[i][j] + " ");
+//				}
+//				System.out.println();
+//			}			
 		}
 		catch (SQLException e) 
 		{
