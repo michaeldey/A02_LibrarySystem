@@ -42,13 +42,19 @@ import javax.swing.JTabbedPane;
 import java.awt.Dimension;
 import java.awt.Insets;
 
-public class LibraryFrame extends JFrame implements TableModelListener {
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.border.SoftBevelBorder;
+import javax.swing.border.BevelBorder;
+
+public class LibraryFrame extends JFrame  {
 
 		private JPanel contentPane;
 		
-		CardLayout cards = new CardLayout();
+		GridLayout libraryLayout;
 		JPanel cardPanel;
-		JPanel firstCard;
+		JPanel panelSouth;
 		JPanel secondCard;
 		private JPanel tablePanel;
 		private JPanel buttonPanel;
@@ -130,9 +136,7 @@ public class LibraryFrame extends JFrame implements TableModelListener {
 		  JButton button_LIST_PATRONS;
 		  JButton button_CHECKOUT_RETURN_BOOK;
 		 
-		  BooksTableModel myBooksTableModel;
-		  PatronsTableModel myPatronsTableModel;
-
+		  
 		  public LibraryFrame() throws SQLException {
 			  
 		    super("Library System"); // Set window title
@@ -140,34 +144,36 @@ public class LibraryFrame extends JFrame implements TableModelListener {
 		    // Close connections exit the application when the user
 		    // closes the window
 
-		    addWindowListener(new WindowAdapter() {
-		        public void windowClosing(WindowEvent e) {
+//		    addWindowListener(new WindowAdapter() {
+//		        public void windowClosing(WindowEvent e) {
 
-		          try {
-		            connection.close();
-		          } catch (SQLException sqle) {
-//		        	System.out.println(e.getMessage());
-//		  			e.printStackTrace();
-		          }
-		          System.exit(0);
-		        }
-		      });
+////		          try {
+////		            connection.close();
+////		          } catch (SQLException sqle) {
+//////		        	System.out.println(e.getMessage());
+//////		  			e.printStackTrace();
+////		          }
+////		          System.exit(0);
+////		        }
+//		     /// });
+//		    
+		    
 
 		    // Initialize and lay out window controls
-
-		    ResultSet myBooksResultSet = getContentsOfBooksTable();
-		    myBooksTableModel = new BooksTableModel(myBooksResultSet);
-		    myBooksTableModel.addTableModelListener(this);
-		    
-		    ResultSet myPatronsResultSet = getContentsOfPatronsTable();
-		    myPatronsTableModel = new PatronsTableModel(myPatronsResultSet);
+//
+//		    ResultSet myBooksResultSet = getContentsOfBooksTable();
+//		    myBooksTableModel = new BooksTableModel(myBooksResultSet);
+//		    myBooksTableModel.addTableModelListener(this);
+//		    
+//		    ResultSet myPatronsResultSet = getContentsOfPatronsTable();
+//		    myPatronsTableModel = new PatronsTableModel(myPatronsResultSet);
 //		    myPatronsTableModel.addEventHandlersToRowSet(this);
 
-		    tableBooks = new JTable(); // Displays the table
-		    tableBooks.setPreferredScrollableViewportSize(new Dimension(450, 200));
-		    tableBooks.setModel(myBooksTableModel);
-		    tablePatrons = new JTable();
-		    tablePatrons.setModel(myPatronsTableModel);
+//		    tableBooks = new JTable(); // Displays the table
+//		    tableBooks.setPreferredScrollableViewportSize(new Dimension(450, 200));
+//		    tableBooks.setModel(myBooksTableModel);
+//		    tablePatrons = new JTable();
+//		    tablePatrons.setModel(myPatronsTableModel);
 		   
 		    label_BOOK_ID = new JLabel("Book ID:  ", JLabel.TRAILING);
 			label_TITLE = new JLabel("Title:  ", JLabel.TRAILING);
@@ -213,99 +219,102 @@ public class LibraryFrame extends JFrame implements TableModelListener {
 			button_LIST_PATRONS = new JButton();
 			button_CHECKOUT_RETURN_BOOK = new JButton();
 			
-		    //textField_BOOK_ID.setText("1001");
-//			textField_TITLE.setText("Title");
-//		    textField_AUTHOR_FIRST.setText("Author's First Name");
-//			textField_AUTHOR_LAST.setText("Author's Last Name");
-//			textField_GENRE.setText("Genre");
-			
-//			textField_PATRON_ID.setText("101");
-//			textField_PATRON_FIRST.setText("Enter Patron's First Name");
-//			textField_PATRON_LAST.setText("Enter Patron's Last Name");
-//			textField_BOOKS_OUT.setText("Enter Books Checked Out");
-
 		    button_ADD_BOOK.setText("Add New Book");
 		    button_ADD_PATRON.setText("Add New Patron");
 			button_UPDATE_BOOKS_DATABASE.setText("Update Books Database");
 			button_UPDATE_PATRONS_DATABASE.setText("Update Patrons Database");
 			button_LIST_ALL_BOOKS.setText("List All Books");
 			
-			String[] comboBoxItems = { "Available Books By Title", "Available Books By Author", "Available Books By Genre" };
-			comboBox_LIST_AVAILABLE_BOOKS = new JComboBox(comboBoxItems);
-			comboBox_LIST_AVAILABLE_BOOKS.setEditable(false);
+			JButton buttonID, buttonTitle, buttonAuthorFirst, buttonAuthorLast, buttonGenre, buttonCheckedOut, buttonPatronIDBooks;
+			
+			buttonID = new JButton();
+			buttonTitle = new JButton();
+			buttonAuthorFirst= new JButton();
+			buttonAuthorLast = new JButton();
+			buttonGenre = new JButton();
+			buttonCheckedOut = new JButton();
+			buttonPatronIDBooks = new JButton();
+			JButton[] bookColumns = { buttonID, buttonTitle, buttonAuthorFirst, buttonAuthorLast, buttonGenre, buttonCheckedOut, buttonPatronIDBooks };
+			
+			buttonID.setText("Book ID");
+			buttonTitle.setText("Title");
+			buttonAuthorFirst.setText("Author's First Name");
+			buttonAuthorLast.setText("Author's Last Name");
+			buttonGenre.setText("Genre");
+			buttonCheckedOut.setText("Checked Out?");
+			buttonPatronIDBooks.setText("Patron with Book");
+			
+			
+			
+//			String[] comboBoxItems = { "Available Books By Title", "Available Books By Author", "Available Books By Genre" };
+//			comboBox_LIST_AVAILABLE_BOOKS = new JComboBox(comboBoxItems);
+//			comboBox_LIST_AVAILABLE_BOOKS.setEditable(false);
 			      
-			button_LIST_PATRONS.setText("List All Patrons");
 			button_CHECKOUT_RETURN_BOOK.setText("Checkout or Return Book");
 			
-		    // Place the components within the tabbedPane; use GridBagLayout
-		    // as the layout.
-					    
+		    // Place the components within the tabbedPane; use BoxLayout
+		    					    
 		    JTabbedPane tabbedPane = new JTabbedPane();
-		    		    
-		    JComponent panel1 = new JPanel();
-		    GridBagLayout gbl_panel1 = new GridBagLayout();
-		    gbl_panel1.rowWeights = new double[]{0.0};
-		    gbl_panel1.columnWeights = new double[]{0.0};
-		    panel1.setLayout(gbl_panel1);
-		    GridBagConstraints c = new GridBagConstraints();
-		    c.insets = new Insets(0, 0, 5, 0);
-		    tabbedPane.addTab("Books", panel1);		    
+		    JComponent panelBookTab = new JPanel();
+		    panelBookTab.setBorder(new SoftBevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		    tabbedPane.addTab("Books", panelBookTab);		    
 
-		    JComponent panel2 = new JPanel();
-		    panel2.setLayout(new GridBagLayout());
-		    GridBagConstraints c2 = new GridBagConstraints();
-		    tabbedPane.addTab("Patrons", panel2);
+		    JComponent panelPatronsTab = new JPanel();
+		    panelPatronsTab.setLayout(new GridBagLayout());
+		    GridBagConstraints cf = new GridBagConstraints();
+		    tabbedPane.addTab("Patrons", panelPatronsTab);
 		    
 		    //Add the tabbed pane to this panel.
 	        getContentPane().add(tabbedPane);
-	         
 	        //The following line enables using scrolling tabs.
 	        tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
+	        panelBookTab.setLayout(new BoxLayout(panelBookTab, BoxLayout.PAGE_AXIS));
 	        
-	        cardPanel = new JPanel();
+	        libraryLayout = new GridLayout(0, 7, 2, 0); 
 	        
-		    JComponent firstCard = new JPanel();
-		    firstCard.setSize(new Dimension(500, 200));
-		    firstCard.setLayout(new GridBagLayout());
-		    GridBagConstraints cf = new GridBagConstraints();
-		    cf.insets = new Insets(0, 0, 0, 5);
-		    cf.gridy = 1;
-		    cf.gridx = 0;
-		    
-		    //new CardLayout(0, 0)
-		    cardPanel.setLayout(cards);
-		    cardPanel.add(firstCard, "add");
-		    cardPanel.setVisible(true);
-		    panel1.add(cardPanel, cf);
-		    		    
-		    JButton checkout = new JButton(" Checkout ");
+	        JPanel panelNorth = new JPanel();
+	        panelNorth.setLayout(libraryLayout);
+	        panelNorth.setSize(new Dimension(400, 500));
+	        panelBookTab.add(new JScrollPane(panelNorth));
+	        panelBookTab.add(Box.createRigidArea(new Dimension(0,20)));
+	        
+	        JPanel panelSouth = new JPanel();
+	        panelSouth.setSize(new Dimension(200, 500));
+	        panelSouth.setBorder(new EmptyBorder(20, 20, 20, 20));
+	        panelSouth.setLayout(new GridBagLayout());
+	        GridBagConstraints c = new GridBagConstraints();
+	        panelBookTab.add(panelSouth);
+	               
+	        for (JButton jb : bookColumns) {
+	        	panelNorth.add(jb);
+	        }
+	        	    
+	        DatabaseControl db = new DatabaseControl("Library_07");
+	        String[][] rowData;
+	        rowData = db.showAllFromQuery("select * from Books");
+	        
+	        for (int i = 0; i < rowData.length; i++) {
+	        	for (int j = 0; j < rowData[i].length; j++) {
+	        		JLabel labelData = new JLabel();
+	        		labelData.setBorder(BorderFactory.createLineBorder(Color.black));
+	        		labelData.setText(rowData[i][j]);
+	        		panelNorth.add(labelData);
+	        	}
+	        }
+	        
+	        JButton checkout = new JButton(" Checkout ");
 		    JButton ret = new JButton("  Return  ");
-		    firstCard.add(checkout);
-		    firstCard.add(ret);
-		    			
-			buttonPanel = new JPanel();
-			buttonPanel.setPreferredSize(new Dimension(500, 200));
-			buttonPanel.setSize(new Dimension(500, 200));
-			buttonPanel.setLayout(new GridBagLayout());
-					  
-		    c.fill = GridBagConstraints.BOTH;
-		    c.anchor = GridBagConstraints.NORTH;
-		    c.weightx = 0.5;
-		    c.weighty = 1.0;
-		    c.gridx = 0;
-		    c.gridy = 0;
-		    c.gridwidth = 4;
-		    panel1.add(new JScrollPane(tableBooks), c);
+		   				  
+//		    c.fill = GridBagConstraints.BOTH;
+//		    c.anchor = GridBagConstraints.NORTH;
+//		    c.weightx = 0.5;
+//		    c.weighty = 1.0;
+//		    c.gridx = 0;
+//		    c.gridy = 0;
+//		    c.gridwidth = 4;
+//		    panelBookTab.add(new JScrollPane(tableBooks), c);
+//
 
-		    c.fill = GridBagConstraints.HORIZONTAL;
-		    c.anchor = GridBagConstraints.LINE_START;
-		    c.weightx = 0.50;
-		    c.weighty = .50;
-		    c.gridx = 0;
-		    c.gridy = 1;
-		    c.gridwidth = 4;
-		    panel1.add(cardPanel, c);
-		    
 		    cf.fill = GridBagConstraints.HORIZONTAL;
 		    cf.weightx = 0.25;
 		    cf.weighty = 0;
@@ -313,7 +322,7 @@ public class LibraryFrame extends JFrame implements TableModelListener {
 		    cf.gridx = 1;
 		    cf.gridy = 0;
 		    cf.gridwidth = 1;
-		    firstCard.add(addBook, cf);
+		    panelSouth.add(addBook, cf);
 		    
 		    cf.fill = GridBagConstraints.HORIZONTAL;
 		    cf.weightx = 0.25;
@@ -322,7 +331,7 @@ public class LibraryFrame extends JFrame implements TableModelListener {
 		    cf.gridx = 0;
 		    cf.gridy = 1;
 		    cf.gridwidth = 1;
-		    firstCard.add(label_TITLE, cf);
+		    panelSouth.add(label_TITLE, cf);
 
 		    cf.fill = GridBagConstraints.HORIZONTAL;
 		    cf.anchor = GridBagConstraints.LINE_START;
@@ -331,7 +340,7 @@ public class LibraryFrame extends JFrame implements TableModelListener {
 		    cf.gridx = 1;
 		    cf.gridy = 1;
 		    cf.gridwidth = 1;
-		    firstCard.add(textField_TITLE, cf);
+		    panelSouth.add(textField_TITLE, cf);
 
 		    cf.fill = GridBagConstraints.HORIZONTAL;
 		    cf.anchor = GridBagConstraints.LINE_END;
@@ -340,7 +349,7 @@ public class LibraryFrame extends JFrame implements TableModelListener {
 		    cf.gridx = 0;
 		    cf.gridy = 2;
 		    cf.gridwidth = 1;
-		    firstCard.add(label_AUTHOR_FIRST, cf);
+		    panelSouth.add(label_AUTHOR_FIRST, cf);
 
 		    cf.fill = GridBagConstraints.HORIZONTAL;
 		    cf.anchor = GridBagConstraints.LINE_END;
@@ -349,7 +358,7 @@ public class LibraryFrame extends JFrame implements TableModelListener {
 		    cf.gridx = 1;
 		    cf.gridy = 2;
 		    cf.gridwidth = 1;
-		    firstCard.add(textField_AUTHOR_FIRST, cf);
+		    panelSouth.add(textField_AUTHOR_FIRST, cf);
 
 		    cf.fill = GridBagConstraints.HORIZONTAL;
 		    cf.anchor = GridBagConstraints.LINE_END;
@@ -358,7 +367,7 @@ public class LibraryFrame extends JFrame implements TableModelListener {
 		    cf.gridx = 0;
 		    cf.gridy = 3;
 		    cf.gridwidth = 1;
-		    firstCard.add(label_AUTHOR_LAST, cf);
+		    panelSouth.add(label_AUTHOR_LAST, cf);
 
 		    cf.fill = GridBagConstraints.HORIZONTAL;
 		    cf.anchor = GridBagConstraints.LINE_START;
@@ -367,7 +376,7 @@ public class LibraryFrame extends JFrame implements TableModelListener {
 		    cf.gridx = 1;
 		    cf.gridy = 3;
 		    cf.gridwidth = 1;
-		    firstCard.add(textField_AUTHOR_LAST, cf);
+		    panelSouth.add(textField_AUTHOR_LAST, cf);
 
 		    cf.fill = GridBagConstraints.HORIZONTAL;
 		    cf.anchor = GridBagConstraints.LINE_END;
@@ -376,7 +385,7 @@ public class LibraryFrame extends JFrame implements TableModelListener {
 		    cf.gridx = 0;
 		    cf.gridy = 4;
 		    cf.gridwidth = 1;
-		    firstCard.add(label_GENRE, cf);
+		    panelSouth.add(label_GENRE, cf);
 
 		    cf.fill = GridBagConstraints.HORIZONTAL;
 		    cf.anchor = GridBagConstraints.LINE_START;
@@ -385,7 +394,7 @@ public class LibraryFrame extends JFrame implements TableModelListener {
 		    cf.gridx = 1;
 		    cf.gridy = 4;
 		    cf.gridwidth = 1;
-		    firstCard.add(textField_GENRE, cf);
+		    panelSouth.add(textField_GENRE, cf);
 		    
 		    cf.fill = GridBagConstraints.HORIZONTAL;
 		    cf.anchor = GridBagConstraints.LINE_END;
@@ -394,7 +403,7 @@ public class LibraryFrame extends JFrame implements TableModelListener {
 		    cf.gridx = 1;
 		    cf.gridy = 5;
 		    cf.gridwidth = 1;
-		    firstCard.add(button_ADD_BOOK, cf);
+		    panelSouth.add(button_ADD_BOOK, cf);
 		    
 		    cf.fill = GridBagConstraints.NONE;
 		    cf.anchor = GridBagConstraints.LINE_START;
@@ -403,7 +412,7 @@ public class LibraryFrame extends JFrame implements TableModelListener {
 		    cf.gridx = 3;
 		    cf.gridy = 5;
 		    //cf.gridwidth = 1;
-		    firstCard.add(checkout, cf);
+		    panelSouth.add(checkout, cf);
 		    
 		    cf.fill = GridBagConstraints.NONE;
 		    cf.anchor = GridBagConstraints.LINE_END;
@@ -412,7 +421,7 @@ public class LibraryFrame extends JFrame implements TableModelListener {
 		    cf.gridx = 3;
 		    cf.gridy = 5;
 		    //cf.gridwidth = 1;
-		    firstCard.add(ret, cf);
+		    panelSouth.add(ret, cf);
 		    
 		    cf.fill = GridBagConstraints.HORIZONTAL;
 		    cf.weightx = 0.25;
@@ -421,7 +430,7 @@ public class LibraryFrame extends JFrame implements TableModelListener {
 		    cf.gridx = 3;
 		    cf.gridy = 0;
 		    cf.gridwidth = 1;
-		    firstCard.add(check_ret, cf);
+		    panelSouth.add(check_ret, cf);
 		    
 		    cf.fill = GridBagConstraints.HORIZONTAL;
 		    cf.weightx = 0.25;
@@ -430,7 +439,7 @@ public class LibraryFrame extends JFrame implements TableModelListener {
 		    cf.gridx = 2;
 		    cf.gridy = 1;
 		    cf.gridwidth = 1;
-		    firstCard.add(label_TITLE2, cf);
+		    panelSouth.add(label_TITLE2, cf);
 		    
 		    cf.fill = GridBagConstraints.HORIZONTAL;
 		    cf.anchor = GridBagConstraints.LINE_START;
@@ -439,7 +448,7 @@ public class LibraryFrame extends JFrame implements TableModelListener {
 		    cf.gridx = 3;
 		    cf.gridy = 1;
 		    cf.gridwidth = 1;
-		    firstCard.add(textField_TITLE2, cf);
+		    panelSouth.add(textField_TITLE2, cf);
 		    
 		    cf.fill = GridBagConstraints.HORIZONTAL;
 		    cf.anchor = GridBagConstraints.LINE_END;
@@ -448,7 +457,7 @@ public class LibraryFrame extends JFrame implements TableModelListener {
 		    cf.gridx = 2;
 		    cf.gridy = 2;
 		    cf.gridwidth = 1;
-		    firstCard.add(label_PATRON_ID_BOOKS, cf);
+		    panelSouth.add(label_PATRON_ID_BOOKS, cf);
 		    
 		    cf.fill = GridBagConstraints.HORIZONTAL;
 		    cf.anchor = GridBagConstraints.LINE_END;
@@ -457,7 +466,7 @@ public class LibraryFrame extends JFrame implements TableModelListener {
 		    cf.gridx = 3;
 		    cf.gridy = 2;
 		    cf.gridwidth = 1;
-		    firstCard.add(textField_PATRON_ID_BOOKS, cf);
+		    panelSouth.add(textField_PATRON_ID_BOOKS, cf);
 		    
 		    cf.fill = GridBagConstraints.HORIZONTAL;
 		    cf.anchor = GridBagConstraints.LINE_END;
@@ -466,7 +475,7 @@ public class LibraryFrame extends JFrame implements TableModelListener {
 		    cf.gridx = 2;
 		    cf.gridy = 3;
 		    cf.gridwidth = 1;
-		    firstCard.add(label_PATRON_FIRST, cf);
+		    panelSouth.add(label_PATRON_FIRST, cf);
 
 		    cf.fill = GridBagConstraints.HORIZONTAL;
 		    cf.anchor = GridBagConstraints.LINE_END;
@@ -475,7 +484,7 @@ public class LibraryFrame extends JFrame implements TableModelListener {
 		    cf.gridx = 3;
 		    cf.gridy = 3;
 		    cf.gridwidth = 1;
-		    firstCard.add(textField_PATRON_FIRST, cf);
+		    panelSouth.add(textField_PATRON_FIRST, cf);
 
 		    cf.fill = GridBagConstraints.HORIZONTAL;
 		    cf.anchor = GridBagConstraints.LINE_END;
@@ -484,7 +493,7 @@ public class LibraryFrame extends JFrame implements TableModelListener {
 		    cf.gridx = 2;
 		    cf.gridy = 4 ;
 		    cf.gridwidth = 1;
-		    firstCard.add(label_PATRON_LAST, cf);
+		    panelSouth.add(label_PATRON_LAST, cf);
 
 		    cf.fill = GridBagConstraints.HORIZONTAL;
 		    cf.anchor = GridBagConstraints.LINE_START;
@@ -493,138 +502,124 @@ public class LibraryFrame extends JFrame implements TableModelListener {
 		    cf.gridx = 3;
 		    cf.gridy = 4;
 		    cf.gridwidth = 1;
-		    firstCard.add(textField_PATRON_LAST, cf);
-		    
-		    c.fill = GridBagConstraints.HORIZONTAL;
-		    c.anchor = GridBagConstraints.LINE_START;
-		    c.weightx = 0.50;
-		    c.weighty = .50;
-		    c.gridx = 0;
-		    c.gridy = 5;
-		    c.gridwidth = 3;
-		    panel1.add(buttonPanel, c);
-		    
-		    c.fill = GridBagConstraints.HORIZONTAL;
-		    c.anchor = GridBagConstraints.LINE_END;
-		    c.weightx = 0.5;
-		    c.weighty = 0;
-		    c.gridx = 0;
-		    c.gridy = 6;
-		    c.gridwidth = 1;
-		    buttonPanel.add(button_UPDATE_BOOKS_DATABASE, c);
-		    
-		    c.fill = GridBagConstraints.HORIZONTAL;
-		    c.anchor = GridBagConstraints.LINE_END;
-		    c.weightx = 0.5;
-		    c.weighty = 0;
-		    c.gridx = 1;
-		    c.gridy = 6;
-		    c.gridwidth = 1;
-		    buttonPanel.add(button_LIST_ALL_BOOKS, c);
-		    
-		    c.fill = GridBagConstraints.HORIZONTAL;
-		    c.anchor = GridBagConstraints.LINE_START;
-		    c.weightx = 0.5;
-		    c.weighty = 0;
-		    c.gridx = 2;
-		    c.gridy = 6;
-		    c.gridwidth = 2;
-		    buttonPanel.add(comboBox_LIST_AVAILABLE_BOOKS, c);
+		    panelSouth.add(textField_PATRON_LAST, cf);
+//		    
+//		    c.fill = GridBagConstraints.HORIZONTAL;
+//		    c.anchor = GridBagConstraints.LINE_START;
+//		    c.weightx = 0.50;
+//		    c.weighty = .50;
+//		    c.gridx = 0;
+//		    c.gridy = 5;
+//		    c.gridwidth = 3;
+//		    panelBookTab.add(buttonPanel, c);
+//		    
+//		    c.fill = GridBagConstraints.HORIZONTAL;
+//		    c.anchor = GridBagConstraints.LINE_END;
+//		    c.weightx = 0.5;
+//		    c.weighty = 0;
+//		    c.gridx = 0;
+//		    c.gridy = 6;
+//		    c.gridwidth = 1;
+//		    buttonPanel.add(button_UPDATE_BOOKS_DATABASE, c);
+//		    
+//		    c.fill = GridBagConstraints.HORIZONTAL;
+//		    c.anchor = GridBagConstraints.LINE_END;
+//		    c.weightx = 0.5;
+//		    c.weighty = 0;
+//		    c.gridx = 1;
+//		    c.gridy = 6;
+//		    c.gridwidth = 1;
+//		    buttonPanel.add(button_LIST_ALL_BOOKS, c);
+//		    
+//		    c.fill = GridBagConstraints.HORIZONTAL;
+//		    c.anchor = GridBagConstraints.LINE_START;
+//		    c.weightx = 0.5;
+//		    c.weighty = 0;
+//		    c.gridx = 2;
+//		    c.gridy = 6;
+//		    c.gridwidth = 2;
+//		    buttonPanel.add(comboBox_LIST_AVAILABLE_BOOKS, c);
+//
+//		    cf.fill = GridBagConstraints.HORIZONTAL;
+//		    cf.weightx = 0.25;
+//		    cf.weighty = 0;
+//		    cf.anchor = GridBagConstraints.CENTER;
+//		    cf.gridx = 2;
+//		    cf.gridy = 1;
+//		    cf.gridwidth = 1;
+//		    panelPatronsTab.add(addPatron, cf);
+//		    
+//		    cf.fill = GridBagConstraints.HORIZONTAL;
+//		    cf.anchor = GridBagConstraints.LINE_END;
+//		    cf.weightx = 0.25;
+//		    cf.weighty = 0;
+//		    cf.gridx = 1;
+//		    cf.gridy = 2;
+//		    cf.gridwidth = 1;
+//		    panelPatronsTab.add(label_PATRON_FIRST2, cf);
+//
+//		    cf.fill = GridBagConstraints.HORIZONTAL;
+//		    cf.anchor = GridBagConstraints.LINE_END;
+//		    cf.weightx = 0.75;
+//		    cf.weighty = 0;
+//		    cf.gridx = 2;
+//		    cf.gridy = 2;
+//		    cf.gridwidth = 1;
+//		    panelPatronsTab.add(textField_PATRON_FIRST2, cf);
+//
+//		    cf.fill = GridBagConstraints.HORIZONTAL;
+//		    cf.anchor = GridBagConstraints.LINE_END;
+//		    cf.weightx = 0.25;
+//		    cf.weighty = 0;
+//		    cf.gridx = 1;
+//		    cf.gridy = 3;
+//		    cf.gridwidth = 1;
+//		    panelPatronsTab.add(label_PATRON_LAST2, cf);
+//
+//		    cf.fill = GridBagConstraints.HORIZONTAL;
+//		    cf.anchor = GridBagConstraints.LINE_START;
+//		    cf.weightx = 0.75;
+//		    cf.weighty = 0;
+//		    cf.gridx = 2;
+//		    cf.gridy = 3;
+//		    cf.gridwidth = 1;
+//		    panelPatronsTab.add(textField_PATRON_LAST2, cf);
+//		    
+//		    c.fill = GridBagConstraints.HORIZONTAL;
+//		    c.anchor = GridBagConstraints.LINE_START;
+//		    c.weightx = 0.5;
+//		    c.weighty = 0;
+//		    c.gridx = 2;
+//		    c.gridy = 4;
+//		    c.gridwidth = 1;
+//		    panelPatronsTab.add(button_ADD_PATRON, c);
+//		    
+//		    c.fill = GridBagConstraints.HORIZONTAL;
+//		    c.anchor = GridBagConstraints.LINE_START;
+//		    c.ipady = 40;
+//		    c.weightx = 0.5;
+//		    c.weighty = 0;
+//		    c.gridx = 0;
+//		    c.gridy = 1;
+//		    c.gridwidth = 1;
+//		    panelPatronsTab.add(button_LIST_PATRONS, c);
+//		    
+//		    c.fill = GridBagConstraints.BOTH;
+//		    c.anchor = GridBagConstraints.CENTER;
+//		    c.weightx = 0.5;
+//		    c.weighty = 1.0;
+//		    c.ipady = 0;
+//		    c.gridx = 0;
+//		    c.gridy = 0;
+//		    c.gridwidth = 4;
+//		    panelPatronsTab.add(new JScrollPane(tablePatrons), c);
+//		    
+//		    // Add listeners for the buttons in the application
 
-		    cf.fill = GridBagConstraints.HORIZONTAL;
-		    cf.weightx = 0.25;
-		    cf.weighty = 0;
-		    cf.anchor = GridBagConstraints.CENTER;
-		    cf.gridx = 2;
-		    cf.gridy = 1;
-		    cf.gridwidth = 1;
-		    panel2.add(addPatron, cf);
-		    
-		    cf.fill = GridBagConstraints.HORIZONTAL;
-		    cf.anchor = GridBagConstraints.LINE_END;
-		    cf.weightx = 0.25;
-		    cf.weighty = 0;
-		    cf.gridx = 1;
-		    cf.gridy = 2;
-		    cf.gridwidth = 1;
-		    panel2.add(label_PATRON_FIRST2, cf);
-
-		    cf.fill = GridBagConstraints.HORIZONTAL;
-		    cf.anchor = GridBagConstraints.LINE_END;
-		    cf.weightx = 0.75;
-		    cf.weighty = 0;
-		    cf.gridx = 2;
-		    cf.gridy = 2;
-		    cf.gridwidth = 1;
-		    panel2.add(textField_PATRON_FIRST2, cf);
-
-		    cf.fill = GridBagConstraints.HORIZONTAL;
-		    cf.anchor = GridBagConstraints.LINE_END;
-		    cf.weightx = 0.25;
-		    cf.weighty = 0;
-		    cf.gridx = 1;
-		    cf.gridy = 3;
-		    cf.gridwidth = 1;
-		    panel2.add(label_PATRON_LAST2, cf);
-
-		    cf.fill = GridBagConstraints.HORIZONTAL;
-		    cf.anchor = GridBagConstraints.LINE_START;
-		    cf.weightx = 0.75;
-		    cf.weighty = 0;
-		    cf.gridx = 2;
-		    cf.gridy = 3;
-		    cf.gridwidth = 1;
-		    panel2.add(textField_PATRON_LAST2, cf);
-		    
-		    c.fill = GridBagConstraints.HORIZONTAL;
-		    c.anchor = GridBagConstraints.LINE_START;
-		    c.weightx = 0.5;
-		    c.weighty = 0;
-		    c.gridx = 2;
-		    c.gridy = 4;
-		    c.gridwidth = 1;
-		    panel2.add(button_ADD_PATRON, c);
-		    
-		    c.fill = GridBagConstraints.HORIZONTAL;
-		    c.anchor = GridBagConstraints.LINE_START;
-		    c.ipady = 40;
-		    c.weightx = 0.5;
-		    c.weighty = 0;
-		    c.gridx = 0;
-		    c.gridy = 1;
-		    c.gridwidth = 1;
-		    panel2.add(button_LIST_PATRONS, c);
-		    
-		    c.fill = GridBagConstraints.BOTH;
-		    c.anchor = GridBagConstraints.CENTER;
-		    c.weightx = 0.5;
-		    c.weighty = 1.0;
-		    c.ipady = 0;
-		    c.gridx = 0;
-		    c.gridy = 0;
-		    c.gridwidth = 4;
-		    panel2.add(new JScrollPane(tablePatrons), c);
-		    
-		    // Add listeners for the buttons in the application
-
 		    
 		    
 		    
-		    tableBooks.getModel().addTableModelListener(new TableModelListener(){
-		    	 public void tableChanged(TableModelEvent e) {
-			        
-//		    		 fireTableDataChanged();
 		    		 
-		    		 
-		    		 // int row = e.getFirstRow();
-//				        int column = e.getColumn();
-//				        TableModel model = (TableModel)e.getSource();
-//				        String columnName = model.getColumnName(column);
-//				        Object data = model.getValueAt(row, column);
-				        
-				        	        
-				  }
-		    });
 		    
 		    button_ADD_BOOK.addActionListener(new ActionListener() {
 
@@ -644,11 +639,8 @@ public class LibraryFrame extends JFrame implements TableModelListener {
 		          Statement stmt = null;
 		          try {
 
-		        	  DatabaseControl db = new DatabaseControl("Library_05");
-					  connection = DriverManager.getConnection(connectionURL);
-					  stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-					  ResultSet rs = getContentsOfBooksTable();
-					  
+		        	  DatabaseControl db = new DatabaseControl("Library_07");
+					  					  
 					  db.addBook(
 							  textField_TITLE.getText(),
                               textField_AUTHOR_FIRST.getText(),
@@ -656,11 +648,19 @@ public class LibraryFrame extends JFrame implements TableModelListener {
                               textField_GENRE.getText().trim()
 					  		);
 					  
+					    String[][] rowData;
+				        rowData = db.showAllFromQuery("select * from Books");
+				        
+				        for (int i = 0; i < rowData.length; i++) {
+				        	for (int j = 0; j < rowData[i].length; j++) {
+				        		JLabel labelData = new JLabel();
+				        		labelData.setBorder(BorderFactory.createLineBorder(Color.black));
+				        		labelData.setText("");
+				        		labelData.setText(rowData[i][j]);
+				        		panelNorth.add(labelData);
+				        	}
+				        }
 					  
-					  
-					  
-					  
-					  //myBooksTableModel.fireTableDataChanged();
 					  
 					  					  
 //					  boolean updatable = ((DatabaseMetaData) rsmd).supportsResultSetConcurrency(ResultSet.TYPE_FORWARD_ONLY,
@@ -762,25 +762,13 @@ public class LibraryFrame extends JFrame implements TableModelListener {
 		        	DatabaseControl db;
 					try {
 						db = new DatabaseControl("Library_07");
-						myBooksTableModel.tableChanged(new TableModelEvent(myBooksTableModel));
-						//db.showAllFromQuery("SELECT * FROM BOOKS");
-						myBooksTableModel = new BooksTableModel(myBooksTableModel.getbooksResultSet());
-						//myBooksTableModel.setValueAt(myBooksResultSet, TableModelEvent.INSERT, TableModelEvent.ALL_COLUMNS);
-						tableBooks.setModel(myBooksTableModel);
-						repaint();
+						
 						
 						//myBooksTableModel.fireTableChanged(new TableModelEvent(myBooksTableModel));
 						//tableBooks = new JTable();
 						
 						
-//						c.fill = GridBagConstraints.BOTH;
-//					    c.anchor = GridBagConstraints.NORTH;
-//					    c.weightx = 0.5;
-//					    c.weighty = 1.0;
-//					    c.gridx = 0;
-//					    c.gridy = 0;
-//					    c.gridwidth = 4;
-//					    panel1.add(new JScrollPane(tableBooks), c);
+//						
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -798,7 +786,7 @@ public class LibraryFrame extends JFrame implements TableModelListener {
 					  Statement stmt = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 		                      				
 					  ResultSet rs = stmt.executeQuery("SELECT * FROM BOOKS");
-					  createNewBooksTableModel();
+					  //createNewBooksTableModel();
 					  
 //					  ResultSet myBooksResultSet = getContentsOfBooksTable();
 //					  myBooksTableModel = new BooksTableModel(myBooksResultSet);
@@ -806,15 +794,7 @@ public class LibraryFrame extends JFrame implements TableModelListener {
 //					  tableBooks.setPreferredScrollableViewportSize(new Dimension(450, 200));
 //					  tableBooks.setModel(myBooksTableModel);
 					  
-					  c.fill = GridBagConstraints.BOTH;
-					   c.anchor = GridBagConstraints.NORTH;
-					    c.weightx = 0.5;
-					    c.weighty = 1.0;
-					    c.gridx = 0;
-					    c.gridy = 0;
-					    c.gridwidth = 4;
-					    panel1.add(new JScrollPane(tableBooks), c);
-					  	
+					  				   
 					 } catch (SQLException sqle) {
 		            displaySQLExceptionDialog(sqle);
 		            
@@ -846,17 +826,17 @@ public class LibraryFrame extends JFrame implements TableModelListener {
 		    );
 		  }
 
-		  private void createNewBooksTableModel() throws SQLException {
-		    myBooksTableModel = new BooksTableModel(getContentsOfBooksTable());
-		    myBooksTableModel.addTableModelListener(this);
-		    tableBooks.setModel(myBooksTableModel);
-		  }
-		  
-		  private void createNewPatronsTableModel() throws SQLException {
-			    myPatronsTableModel = new PatronsTableModel(getContentsOfPatronsTable());
-			    //myPatronsTableModel.addEventHandlersToRowSet(this);
-			    tablePatrons.setModel(myPatronsTableModel);
-			  }
+//		  private void createNewBooksTableModel() throws SQLException {
+//		    myBooksTableModel = new BooksTableModel(getContentsOfBooksTable());
+//		    myBooksTableModel.addTableModelListener(this);
+//		    tableBooks.setModel(myBooksTableModel);
+//		  }
+//		  
+//		  private void createNewPatronsTableModel() throws SQLException {
+//			    myPatronsTableModel = new PatronsTableModel(getContentsOfPatronsTable());
+//			    //myPatronsTableModel.addEventHandlersToRowSet(this);
+//			    tablePatrons.setModel(myPatronsTableModel);
+			 // }
 
 		// Display the error in a dialog box.
 
@@ -965,33 +945,33 @@ public class LibraryFrame extends JFrame implements TableModelListener {
 //		        }
 //		    }
 
-		@Override
-		public void tableChanged(TableModelEvent e) {
-			 //ResultSet rs = this.myBooksTableModel.booksResultSet;
-			 
-			 try {
-				 if (button_UPDATE_BOOKS_DATABASE.isSelected()) {
-				 myBooksTableModel = new BooksTableModel(myBooksTableModel.getbooksResultSet());
-				 tableBooks.setModel(myBooksTableModel);
-				 this.tableChanged(e);
-				 }
-			 		} catch (SQLException ex) {
-				 
-			 	System.out.println(ex);
-			 		
-			 // Display the error in a dialog box.
-			 	
-			 	JOptionPane.showMessageDialog(
-				        LibraryFrame.this,
-				        new String[] { // Display a 2-line message
-				        	ex.getClass().getName() + ": ",
-						    ex.getMessage()
-
-				      
-				        }
-				      );
-				    }
-			 }
+//		@Override
+//		public void tableChanged(TableModelEvent e) {
+//			 //ResultSet rs = this.myBooksTableModel.booksResultSet;
+//			 
+//			 try {
+//				 if (button_UPDATE_BOOKS_DATABASE.isSelected()) {
+//				 myBooksTableModel = new BooksTableModel(myBooksTableModel.getbooksResultSet());
+//				 tableBooks.setModel(myBooksTableModel);
+//				 this.tableChanged(e);
+//				 }
+//			 		} catch (SQLException ex) {
+//				 
+//			 	System.out.println(ex);
+//			 		
+//			 // Display the error in a dialog box.
+//			 	
+//			 	JOptionPane.showMessageDialog(
+//				        LibraryFrame.this,
+//				        new String[] { // Display a 2-line message
+//				        	ex.getClass().getName() + ": ",
+//						    ex.getMessage()
+//
+//				      
+//				        }
+//				      );
+//				    }
+//			 }
 		}
 		
 		
