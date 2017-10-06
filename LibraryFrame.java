@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -26,13 +27,8 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
-import javax.swing.table.TableModel;
 
-import net.miginfocom.swing.MigLayout;
 import javax.swing.JTabbedPane;
 import java.awt.Dimension;
 import java.awt.Insets;
@@ -45,15 +41,14 @@ import javax.swing.border.BevelBorder;
 
 public class LibraryFrame extends JFrame  {
 
-		GridLayout libraryLayout;
-		GridLayout patronLayout;
-		JPanel boxBooksNorth;
-		JPanel boxPatronsNorth;
-		JPanel secondCard;
+		private GridLayout libraryLayout;
+		private GridLayout patronLayout;
+		private JPanel boxBooksNorth;
+		private JPanel boxPatronsNorth;
+		private JButton buttonAvailable;
+		private JPanel boxPatronsSouth;
 		Connection connection;
 		static char selection;
-		private JPanel tablePanel;
-		private JPanel buttonPanel;
 		private DatabaseControl db = new DatabaseControl("Library_07");	
 		//private static final String connectionURL="jdbc:derby:Library_07;create=true";		
 		boolean checkedIn;
@@ -104,34 +99,30 @@ public class LibraryFrame extends JFrame  {
 //		      });
 		        // Initialize and lay out window controls
 		   
-		      JLabel label_BOOK_ID;
-			  JLabel label_TITLE;
-			  JLabel label_TITLE2;
+		      JLabel label_TITLE;
+			  JLabel label_TITLE_CHECKOUT_FORM;
 			  JLabel label_AUTHOR_FIRST;
 			  JLabel label_AUTHOR_LAST;
 			  JLabel label_GENRE;
-			  JLabel label_CHECKED_OUT;
-			  JLabel label_PATRON_ID_BOOKS;
-			  JLabel addBook;
-			  JLabel check_ret;
+			  JLabel label_addBook;
+			  JLabel label_addPatron;
+			  JLabel label_check_ret;
 			  		  
-			  JLabel label_PATRON_ID;
 			  JLabel label_PATRON_FIRST;
 			  JLabel label_PATRON_LAST;
 			  JLabel label_PATRON_FIRST2;
 			  JLabel label_PATRON_LAST2;
+			  			  
+			  JLabel label_viewBooksOut;
+			  JLabel label_PATRON_ID;
 			  JLabel label_BOOKS_OUT;
-			  JLabel addPatron;
-
-			  JTextField textField_BOOK_ID;
+			  			 
 			  JTextField textField_TITLE;
-			  JTextField textField_TITLE2;
+			  JTextField textField_TITLE_CHECKOUT_FORM;
 			  JTextField textField_AUTHOR_FIRST;
 			  JTextField textField_AUTHOR_LAST;
 			  JTextField textField_GENRE;
-			  JTextField textField_CHECKED_OUT;
-			  JTextField textField_PATRON_ID_BOOKS;
-			  
+			  		  
 			  JTextField textField_PATRON_ID;
 			  JTextField textField_PATRON_FIRST;
 			  JTextField textField_PATRON_LAST;
@@ -141,45 +132,43 @@ public class LibraryFrame extends JFrame  {
 
 			  JButton button_ADD_BOOK;
 			  JButton button_ADD_PATRON;
-			  JButton button_UPDATE_BOOKS_DATABASE;
-			  JButton button_UPDATE_PATRONS_DATABASE;
-			  JButton button_LIST_PATRONS;
-			  JButton button_CHECKOUT_RETURN_BOOK;
 			  JButton button_CHECKOUT_BOOK;
 			  JButton button_RETURN_BOOK;
+			  JButton button_SHOW_BOOKS;
 		    
 		    checkedIn = false; //initialize sort by checkedIn is false
 			sortByName = "BookID"; //initial sort is bookID
 		    
-		    label_BOOK_ID = new JLabel("Book ID:  ", JLabel.TRAILING);
-			label_TITLE = new JLabel("Title:  ", JLabel.TRAILING);
-			label_TITLE2 = new JLabel("Title:  ", JLabel.TRAILING);
+		    label_TITLE = new JLabel("Title:  ", JLabel.TRAILING);
+			label_TITLE_CHECKOUT_FORM = new JLabel("Title:  ", JLabel.TRAILING);
 			label_AUTHOR_FIRST = new JLabel("Author's First Name:  ", JLabel.TRAILING);
 			label_AUTHOR_LAST = new JLabel("Author's Last Name:  ", JLabel.TRAILING );
 			label_GENRE = new JLabel("Genre:  ", JLabel.TRAILING);
-			label_CHECKED_OUT = new JLabel();
-			addBook = new JLabel("Add a Book to the Database", JLabel.CENTER);
-			check_ret = new JLabel("Checkout or Return a Book", JLabel.CENTER);
+			label_addBook = new JLabel("Add a Book to the Database", JLabel.CENTER);
+			label_addBook.setFont(new Font("Helvetica", Font.PLAIN, 14));
+			label_check_ret = new JLabel("Checkout or Return a Book", JLabel.CENTER);
+			label_check_ret.setFont(new Font("Helvetica", Font.PLAIN, 14));
 			  
-			label_PATRON_ID = new JLabel("Patron ID:  ", JLabel.TRAILING);
-			label_PATRON_ID_BOOKS = new JLabel("Patron ID:   ", JLabel.TRAILING);
+			label_PATRON_ID = new JLabel("Patron ID:", JLabel.LEADING);
+			//label_PATRON_ID_BOOKS = new JLabel("Patron ID:   ", JLabel.TRAILING);
 			label_PATRON_FIRST = new JLabel("Patron's First Name:  ", JLabel.TRAILING);
 			label_PATRON_LAST = new JLabel("Patron's Last Name:  ", JLabel.TRAILING);
 			label_PATRON_FIRST2 = new JLabel("Patron's First Name:  ", JLabel.CENTER);
 			label_PATRON_LAST2 = new JLabel("Patron's Last Name:  ", JLabel.CENTER);
-			label_BOOKS_OUT = new JLabel("Books Checked Out:  ", JLabel.TRAILING);
-			addPatron = new JLabel("Add a Patron to the Database", JLabel.CENTER);
+			label_BOOKS_OUT = new JLabel("Books Checked Out:", JLabel.LEADING);
+			label_addPatron = new JLabel("Add a Patron to the Database", JLabel.CENTER);
+			label_addPatron.setFont(new Font("Helvetica", Font.PLAIN, 14));
+			label_viewBooksOut = new JLabel("View Books Checked Out by Patron", JLabel.CENTER);
+			label_viewBooksOut.setFont(new Font("Helvetica", Font.PLAIN, 14));
+			JLabel label_blank = new JLabel("");
 			
-			textField_BOOK_ID = new JTextField();
 			textField_TITLE = new JTextField();
-			textField_TITLE2 = new JTextField();
+			textField_TITLE_CHECKOUT_FORM = new JTextField();
 			textField_AUTHOR_FIRST = new JTextField();
 			textField_AUTHOR_LAST = new JTextField();
 			textField_GENRE = new JTextField();
-			textField_CHECKED_OUT = new JTextField();
-			  
+						  
 			textField_PATRON_ID = new JTextField();
-			textField_PATRON_ID_BOOKS = new JTextField();
 			textField_PATRON_FIRST = new JTextField();
 			textField_PATRON_LAST = new JTextField();
 			textField_PATRON_FIRST2 = new JTextField();
@@ -188,26 +177,23 @@ public class LibraryFrame extends JFrame  {
 
 			button_ADD_BOOK = new JButton();
 			button_ADD_PATRON = new JButton();
-			button_UPDATE_BOOKS_DATABASE = new JButton();
-			button_UPDATE_PATRONS_DATABASE = new JButton();
-			button_LIST_PATRONS = new JButton();
-			//button_CHECKOUT_RETURN_BOOK = new JButton();
 			button_CHECKOUT_BOOK = new JButton(" Checkout ");
 			button_RETURN_BOOK = new JButton("  Return  ");
+			button_SHOW_BOOKS = new JButton("Show Books");
 			
 		    button_ADD_BOOK.setText("Add New Book");
 		    button_ADD_PATRON.setText("Add New Patron");
-			button_UPDATE_BOOKS_DATABASE.setText("Update Books Database");
-			button_UPDATE_PATRONS_DATABASE.setText("Update Patrons Database");
+//			button_UPDATE_BOOKS_DATABASE.setText("Update Books Database");
+//			button_UPDATE_PATRONS_DATABASE.setText("Update Patrons Database");
 						
-			JButton buttonID, buttonTitle, buttonAuthorFirst, buttonAuthorLast, buttonGenre, buttonAvailable, buttonPatronIDBooks;
+			JButton buttonID, buttonTitle, buttonAuthorFirst, buttonAuthorLast, buttonGenre, buttonPatronIDBooks;
 			
 			buttonID = new JButton("Book ID");
 			buttonTitle = new JButton("Title");
 			buttonAuthorFirst= new JButton("Author's First Name");
 			buttonAuthorLast = new JButton("Author's Last Name");
 			buttonGenre = new JButton("Genre");
-			buttonAvailable = new JButton("Click to List Available Books");
+			buttonAvailable = new JButton("Book Status: All Books");
 			buttonPatronIDBooks = new JButton("Patron with Book");
 			JButton[] bookColumns = { buttonID, buttonTitle, buttonAuthorFirst, buttonAuthorLast, buttonGenre, buttonAvailable, buttonPatronIDBooks };
 					
@@ -288,16 +274,18 @@ public class LibraryFrame extends JFrame  {
 	       	        
 	        boxPatronsNorth = new JPanel();
 	        boxPatronsNorth.setLayout(patronLayout);
-	        boxPatronsNorth.setPreferredSize(new Dimension(200, 400));
+	        boxPatronsNorth.setPreferredSize(new Dimension(200, 200));
 	        panelPatronTab.add(new JScrollPane(boxPatronsNorth));
 	        panelPatronTab.add(Box.createRigidArea(new Dimension(0,20)));
 	        
 	        JPanel boxPatronsCenter = new JPanel();
 	        boxPatronsCenter.setLayout(new GridBagLayout());
+	        boxPatronsCenter.setBorder(new EmptyBorder(20, 20, 20, 20));
+	        boxPatronsCenter.setPreferredSize(new Dimension(200, 100));
 	        GridBagConstraints cc = new GridBagConstraints();
 	        panelPatronTab.add(boxPatronsCenter);
 	        
-	        JPanel boxPatronsSouth = new JPanel();
+	        boxPatronsSouth = new JPanel();
 	        boxPatronsSouth.setSize(new Dimension(200, 300));
 	        boxPatronsSouth.setBorder(new EmptyBorder(20, 20, 20, 20));
 	        boxPatronsSouth.setLayout(new GridBagLayout());
@@ -308,27 +296,18 @@ public class LibraryFrame extends JFrame  {
 	        	boxPatronsButtons.add(jb);
 	        }
 	        
-	        String[][] rowData;
-	        rowData = db.showAllFromQuery("select * from Patrons");
-//	        rowData = db.makeBookGrid(checkedIn, sortByName);		//mike is making this method
-	        
-	        for (int i = 0; i < rowData.length; i++) {
-	        	for (int j = 0; j < rowData[i].length; j++) {
-	        		JLabel labelData = new JLabel();
-	        		labelData.setBorder(BorderFactory.createLineBorder(Color.black));
-	        		labelData.setText(rowData[i][j]);
-	        		boxPatronsNorth.add(labelData);
-	        	}
-	        }
+	        redrawPatronGrid(db);
 		   				  
-		    cf.fill = GridBagConstraints.HORIZONTAL;
+		    //GridBag constraints for Books Tabbed Pane
+	        
+	        cf.fill = GridBagConstraints.HORIZONTAL;
 		    cf.weightx = 0.25;
 		    cf.weighty = 0;
 		    cf.anchor = GridBagConstraints.CENTER;
 		    cf.gridx = 1;
 		    cf.gridy = 0;
 		    cf.gridwidth = 1;
-		    boxBooksSouth.add(addBook, cf);
+		    boxBooksSouth.add(label_addBook, cf);
 		    
 		    cf.fill = GridBagConstraints.HORIZONTAL;
 		    cf.weightx = 0.25;
@@ -436,7 +415,7 @@ public class LibraryFrame extends JFrame  {
 		    cf.gridx = 3;
 		    cf.gridy = 0;
 		    cf.gridwidth = 1;
-		    boxBooksSouth.add(check_ret, cf);
+		    boxBooksSouth.add(label_check_ret, cf);
 		    
 		    cf.fill = GridBagConstraints.HORIZONTAL;
 		    cf.weightx = 0.25;
@@ -445,7 +424,7 @@ public class LibraryFrame extends JFrame  {
 		    cf.gridx = 2;
 		    cf.gridy = 1;
 		    cf.gridwidth = 1;
-		    boxBooksSouth.add(label_TITLE2, cf);
+		    boxBooksSouth.add(label_TITLE_CHECKOUT_FORM, cf);
 		    
 		    cf.fill = GridBagConstraints.HORIZONTAL;
 		    cf.anchor = GridBagConstraints.LINE_START;
@@ -454,7 +433,7 @@ public class LibraryFrame extends JFrame  {
 		    cf.gridx = 3;
 		    cf.gridy = 1;
 		    cf.gridwidth = 1;
-		    boxBooksSouth.add(textField_TITLE2, cf);
+		    boxBooksSouth.add(textField_TITLE_CHECKOUT_FORM, cf);
 		    
 //		    cf.fill = GridBagConstraints.HORIZONTAL;
 //		    cf.anchor = GridBagConstraints.LINE_END;
@@ -510,99 +489,133 @@ public class LibraryFrame extends JFrame  {
 		    cf.gridwidth = 1;
 		    boxBooksSouth.add(textField_PATRON_LAST, cf);
 	    
-		    cf.fill = GridBagConstraints.HORIZONTAL;
-		    cf.weightx = 0.25;
-		    cf.weighty = 0;
-		    cf.anchor = GridBagConstraints.CENTER;
-		    cf.gridx = 1;
-		    cf.gridy = 1;
-		    cf.gridwidth = 1;
-		    boxPatronsCenter.add(addPatron, cc);
+		 
+		    //GridBag constraints for Patrons Tabbed Pane
+		    		    
+		    cc.fill = GridBagConstraints.HORIZONTAL;
+		    cc.weightx = 0.15;
+		    cc.weighty = 0.25;
+		    cc.anchor = GridBagConstraints.CENTER;
+		    cc.gridx = 1;
+		    cc.gridy = 1;
+		    cc.gridwidth = 1;
+		    boxPatronsCenter.add(label_addPatron, cc);
 		    
 		    cc.fill = GridBagConstraints.HORIZONTAL;
 		    cc.anchor = GridBagConstraints.LINE_END;
-		    cc.weightx = 0.25;
-		    cc.weighty = 0;
+		    cc.weightx = 0.15;
+		    cc.weighty = 0.0;
 		    cc.gridx = 0;
-		    cc.gridy = 2;
+		    cc.gridy = 3;
 		    cc.gridwidth = 1;
 		    boxPatronsCenter.add(label_PATRON_FIRST2, cc);
 
 		    cc.fill = GridBagConstraints.HORIZONTAL;
 		    cc.anchor = GridBagConstraints.LINE_END;
-		    cc.weightx = 0.75;
-		    cc.weighty = 0;
+		    cc.weightx = 0.15;
+		    cc.weighty = 0.25;
 		    cc.gridx = 0;
-		    cc.gridy = 3;
+		    cc.gridy = 4;
 		    cc.gridwidth = 1;
 		    boxPatronsCenter.add(textField_PATRON_FIRST2, cc);
 
 		    cc.fill = GridBagConstraints.HORIZONTAL;
 		    cc.anchor = GridBagConstraints.LINE_END;
-		    cc.weightx = 0.25;
-		    cc.weighty = 0;
+		    cc.weightx = 0.15;
+		    cc.weighty = 0.0;
 		    cc.gridx = 1;
-		    cc.gridy = 2;
+		    cc.gridy = 3;
 		    cc.gridwidth = 1;
 		    boxPatronsCenter.add(label_PATRON_LAST2, cc);
 
 		    cc.fill = GridBagConstraints.HORIZONTAL;
 		    cc.anchor = GridBagConstraints.LINE_START;
-		    cc.weightx = 0.75;
-		    cc.weighty = 0;
+		    cc.weightx = 0.15;
+		    cc.weighty = 0.25;
 		    cc.gridx = 1;
-		    cc.gridy = 3;
+		    cc.gridy = 4;
 		    cc.gridwidth = 1;
 		    boxPatronsCenter.add(textField_PATRON_LAST2, cc);
 		    
 		    cc.fill = GridBagConstraints.HORIZONTAL;
 		    cc.anchor = GridBagConstraints.LINE_START;
-		    cc.weightx = 0.5;
-		    cc.weighty = 0;
+		    cc.weightx = 0.15;
+		    cc.weighty = 0.25;
 		    cc.gridx = 3;
-		    cc.gridy = 3;
+		    cc.gridy = 4;
 		    cc.gridwidth = 1;
 		    boxPatronsCenter.add(button_ADD_PATRON, cc);
 		    
-//		    c.fill = GridBagConstraints.HORIZONTAL;
-//		    c.anchor = GridBagConstraints.LINE_START;
-//		    c.ipady = 40;
-//		    c.weightx = 0.5;
-//		    c.weighty = 0;
-//		    c.gridx = 0;
-//		    c.gridy = 1;
-//		    c.gridwidth = 1;
-//		    panelPatronsTab.add(button_LIST_PATRONS, c);
-//		    
-//		    c.fill = GridBagConstraints.BOTH;
-//		    c.anchor = GridBagConstraints.CENTER;
-//		    c.weightx = 0.5;
-//		    c.weighty = 1.0;
-//		    c.ipady = 0;
-//		    c.gridx = 0;
-//		    c.gridy = 0;
-//		    c.gridwidth = 4;
-//		    panelPatronsTab.add(new JScrollPane(tablePatrons), c);
-//		    
-//		    // Add listeners for the buttons in the application
+		    c.fill = GridBagConstraints.HORIZONTAL;
+		    c.anchor = GridBagConstraints.LINE_START;
+		    c.weightx = 0.25;
+		    c.weighty = 0.25;
+		    c.gridx = 0;
+		    c.gridy = 1;
+		    c.gridwidth = 5;
+		    boxPatronsSouth.add(label_viewBooksOut, c);
+		    
+		    c.fill = GridBagConstraints.BOTH;
+		    c.anchor = GridBagConstraints.CENTER;
+		    c.weightx = 0.1;
+		    c.weighty = 0.75;
+		    c.gridx = 0;
+		    c.gridy = 2;
+		    c.gridwidth = 1;
+		    boxPatronsSouth.add(label_PATRON_ID, c);
+		    
+		    c.fill = GridBagConstraints.BOTH;
+		    c.anchor = GridBagConstraints.CENTER;
+		    c.weightx = 0.1;
+		    c.weighty = 0.75;
+		    c.gridx = 0;
+		    c.gridy = 3;
+		    c.gridwidth = 1;
+		    boxPatronsSouth.add(textField_PATRON_ID, c);
+		    
+		    c.fill = GridBagConstraints.BOTH;
+		    c.anchor = GridBagConstraints.CENTER;
+		    c.weightx = 0.5;
+		    c.weighty = .75;
+		    c.gridx = 1;
+		    c.gridy = 2;
+		    c.gridwidth = 3;
+		    boxPatronsSouth.add(label_BOOKS_OUT, c);
+		    
+		    c.fill = GridBagConstraints.BOTH;
+		    c.anchor = GridBagConstraints.CENTER;
+		    c.weightx = 0.5;
+		    c.weighty = .75;
+		    c.gridx = 1;
+		    c.gridy = 3;
+		    c.gridwidth = 3;
+		    boxPatronsSouth.add(textField_BOOKS_OUT, c);
+		    
+		    c.fill = GridBagConstraints.BOTH;
+		    c.anchor = GridBagConstraints.CENTER;
+		    c.weightx = 0.2;
+		    c.weighty = .75;
+		    c.gridx = 4;
+		    c.gridy = 3;
+		    c.gridwidth = 1;
+		    boxPatronsSouth.add(button_SHOW_BOOKS, c);
+		     
 
+		    // Add listeners for the buttons in the application
 			    
 		    button_ADD_BOOK.addActionListener(new ActionListener() {
-
 		       public void actionPerformed(ActionEvent e) {
-		        	       	
+		        	
+		    	   //dialog box for the user to verify what book information was just added
 		        	JOptionPane.showMessageDialog(LibraryFrame.this,
 		                                        new String[] {
-		                "Adding the following row:",
+		                "Adding the following book:",
 		                "Title: [" + textField_TITLE.getText() + "]",
 		                "Author's First Name: [" + textField_AUTHOR_FIRST.getText() + "]",
 		                "Author's Last Name: [" + textField_AUTHOR_LAST.getText() + "]",
 		                "Genre: [" + textField_GENRE.getText() + "]" });
 		          
-		          System.out.printf( "%s %s %s %s %b %n", textField_TITLE.getText(), textField_AUTHOR_FIRST.getText(), textField_AUTHOR_LAST.getText(), 
-		        		  textField_GENRE.getText().trim(), false); //Integer.parseInt(textField_BOOK_ID.getText().trim())
-
-		          Statement stmt = null;
+		             Statement stmt = null;
 		          try {
         	  
 		        	  db.addBook(
@@ -630,23 +643,28 @@ public class LibraryFrame extends JFrame  {
 					} }
 		          }
 		        }
-
-			
 		      });
 		    //end Add Book Action Listener
 		    
 		    button_CHECKOUT_BOOK.addActionListener(new ActionListener() {
-
 			       public void actionPerformed(ActionEvent e) {
 			    	   
+			    	 //dialog box for the user to verify what book was checked out to whom
+			    	   JOptionPane.showMessageDialog(LibraryFrame.this,
+                               new String[] {
+                            		   	"Checking out this book:",
+                            		   	"Title: [" + textField_TITLE_CHECKOUT_FORM.getText() + "]", 
+                            		   	"Patron's First Name: [" + textField_PATRON_FIRST.getText() + "]",
+                            		   	"Patron's Last Name: [" + textField_PATRON_LAST.getText() + "]"  });
+                            		   				    	   
 			    	   try {
 						db.checkOutBookByNames( 
-								   textField_TITLE.getText(),
-								   textField_PATRON_FIRST.getText(),
-								   textField_PATRON_LAST.getText()
+								textField_TITLE_CHECKOUT_FORM.getText(),
+								textField_PATRON_FIRST.getText(),
+								textField_PATRON_LAST.getText()
 								   );
 						
-						textField_TITLE.setText("");
+						textField_TITLE_CHECKOUT_FORM.setText("");
 						textField_PATRON_FIRST.setText("");
 						textField_PATRON_LAST.setText("");
 						
@@ -657,11 +675,9 @@ public class LibraryFrame extends JFrame  {
 						e1.printStackTrace();
 					}
 		     }
-		    
-	      });
+		   });
 		    
 		    button_RETURN_BOOK.addActionListener(new ActionListener() {
-
 			       public void actionPerformed(ActionEvent e) {
 			    	   
 			    	   try {
@@ -686,7 +702,6 @@ public class LibraryFrame extends JFrame  {
 	      });
 		    
 		    buttonID.addActionListener(new ActionListener() {
-
 			       public void actionPerformed(ActionEvent e) {
 			    	   
 			    	   try {
@@ -703,7 +718,6 @@ public class LibraryFrame extends JFrame  {
 	      });
 		    
 		    buttonTitle.addActionListener(new ActionListener() {
-
 			       public void actionPerformed(ActionEvent e) {
 			    	   
 			    	   try {
@@ -720,7 +734,6 @@ public class LibraryFrame extends JFrame  {
 	      });
 		    
 		    buttonAuthorFirst.addActionListener(new ActionListener() {
-
 			       public void actionPerformed(ActionEvent e) {
 			    	   
 			    	   try {
@@ -737,7 +750,6 @@ public class LibraryFrame extends JFrame  {
 	      });
 		    
 		    buttonAuthorLast.addActionListener(new ActionListener() {
-
 			       public void actionPerformed(ActionEvent e) {
 			    	   
 			    	   try {
@@ -754,7 +766,6 @@ public class LibraryFrame extends JFrame  {
 	      });
 		    
 		    buttonGenre.addActionListener(new ActionListener() {
-
 			       public void actionPerformed(ActionEvent e) {
 			    	   
 			    	   try {
@@ -767,17 +778,22 @@ public class LibraryFrame extends JFrame  {
 						e1.printStackTrace();
 					}
 		     }
-		    
-	      });
+	     });
 		    
 		    buttonAvailable.addActionListener(new ActionListener() {
-
 			       public void actionPerformed(ActionEvent e) {
 			    	 
 						//bookGrid.add(makeBookGrid(checkedIn, sortByName));
 			    	   try { 
 			    	   checkedIn = !checkedIn; //toggle boolean value for show only checked in
 			    	   sortByName = "CheckedOut";
+			    	   if (buttonAvailable.getText() == "Book Status: All Books") {
+			    		   buttonAvailable.setText("Available Books");
+			    	   } else {
+			    		   if (buttonAvailable.getText() == "Available Books"){
+			    			   buttonAvailable.setText("Book Status: All Books");
+			    		   }
+			    	   }
 						
 						 redrawBookGrid(db);
 						
@@ -786,63 +802,78 @@ public class LibraryFrame extends JFrame  {
 						e1.printStackTrace();
 					}
 		     }
-		    
 	      });
 		    
-//		    button_LIST_PATRONS.addActionListener(new ActionListener() {
-//
-//		        public void actionPerformed(ActionEvent e) {
-//		        	 try {
-//		        		 getContentsOfPatronsTable();
-//		        		 c.fill = GridBagConstraints.BOTH;
-//		     		    c.anchor = GridBagConstraints.CENTER;
-//		     		    c.weightx = 0.5;
-//		     		    c.weighty = 1.0;
-//		     		    c.gridx = 0;
-//		     		    c.gridy = 2;
-//		     		    c.gridwidth = 2;
-//		        		 contentPane.add(new JScrollPane(tablePatrons), c);
-//		        	 }catch (SQLException sqle) {
-//				            displaySQLExceptionDialog(sqle);
-//				          }
-//				        }
-//				      });
-		        	
-		       
-		    button_UPDATE_BOOKS_DATABASE.addActionListener(new ActionListener() {
-
+		    button_ADD_PATRON.addActionListener(new ActionListener() {
 		        public void actionPerformed(ActionEvent e) {
-		        	DatabaseControl db;
-					try {
-						db = new DatabaseControl("Library_07");
+		        	
+		        	//dialog box for the user to verify what name was added
+		        	JOptionPane.showMessageDialog(LibraryFrame.this,
+                            new String[] {
+                         		   	"Adding the following patron:",
+                         		   	"Patron's First Name: [" + textField_PATRON_FIRST2.getText() + "]",
+                         		   	"Patron's Last Name: [" + textField_PATRON_LAST2.getText() + "]"  });
+                         		   				    	   
+			    	   try {
+			    		   sortByName = "Patron";
+			    		   
+			    		   db.addPatron( 
+								textField_PATRON_FIRST2.getText(),
+								textField_PATRON_LAST2.getText()
+								   );
 						
+						textField_PATRON_FIRST2.setText("");
+						textField_PATRON_LAST2.setText("");
 						
-						//myBooksTableModel.fireTableChanged(new TableModelEvent(myBooksTableModel));
-						//tableBooks = new JTable();
+						redrawPatronGrid(db);
 						
-						
-//						
 					} catch (SQLException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 		        }
 		      });
+		    
+		    button_SHOW_BOOKS.addActionListener(new ActionListener() {
+		        public void actionPerformed(ActionEvent e) {
+		        	                         		   				    	   
+//			    	   try {
+//			    		   sortByName = "Title";
+//			    		   
+//			    		  						
+//			    		   textField_BOOKS_OUT.setText("");
+//												
+//												
+//					} catch (SQLException e1) {
+//						// TODO Auto-generated catch block
+//						e1.printStackTrace();
+//					}
+		        }
+		      });
+	
 		  
 		  
-		 
-		  } 
 		  
-		 // button_ADD_PATRON.addActionListener(new ActionListener() {
-//		        public void actionPerformed(ActionEvent e) {
-//		          try {
-//		            createNewPatronsTableModel();
-//		          } catch (SQLException sqle) {
-//		            displaySQLExceptionDialog(sqle);
-//		          }
-//		        }
-//		      });
-//		  }
+		  
+		  
+		  
+} //end class  
+	
+		    private void redrawPatronGrid(DatabaseControl db) throws SQLException {
+		    	String[][] rowData;
+		    	rowData = db.showAllFromQuery("select * from Patrons");
+//	        	rowData = db.makeBookGrid(checkedIn, sortByName);		//mike is making this method
+		    	boxPatronsNorth.removeAll();
+		
+		    	for (int i = 0; i < rowData.length; i++) {
+		    		for (int j = 0; j < rowData[i].length; j++) {
+		    			JLabel labelData = new JLabel();
+		    			labelData.setBorder(BorderFactory.createLineBorder(Color.black));
+		    			labelData.setText(rowData[i][j]);
+		    			boxPatronsNorth.add(labelData);
+			}
+		}
+	}
 
 		  private void displaySQLExceptionDialog(SQLException e) {
 
@@ -855,7 +886,6 @@ public class LibraryFrame extends JFrame  {
 		      }
 		    );
 		  }
-
 
 		  public void redrawBookGrid(DatabaseControl db) throws SQLException {
 				String[][] rowData;
@@ -872,16 +902,16 @@ public class LibraryFrame extends JFrame  {
 				    }
 			}
 	      
-		  
+		  }	  
 		 
-		  protected JComponent makeTextPanel(String text) {
-		        JPanel panel = new JPanel(false);
-		        JLabel filler = new JLabel(text);
-		        filler.setHorizontalAlignment(JLabel.CENTER);
-		        panel.setLayout(new GridLayout(1, 1));
-		        panel.add(filler);
-		        return panel;
-		    }     
+//		  protected JComponent makeTextPanel(String text) {
+//		        JPanel panel = new JPanel(false);
+//		        JLabel filler = new JLabel(text);
+//		        filler.setHorizontalAlignment(JLabel.CENTER);
+//		        panel.setLayout(new GridLayout(1, 1));
+//		        panel.add(filler);
+//		        return panel;
+//		    }     
 //
 //			      // In MySQL, to disable auto-commit, set the property relaxAutoCommit to
 //			      // true in the connection URL.
@@ -907,7 +937,7 @@ public class LibraryFrame extends JFrame  {
 		  		  		  
 		  
 
-		}
+		
 		
 		
 	
