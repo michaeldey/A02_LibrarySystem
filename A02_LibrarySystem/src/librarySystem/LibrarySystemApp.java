@@ -51,10 +51,18 @@ public class LibrarySystemApp {
 			System.out.println();
 		}
 		
-//		String[][] getPatronSize = db.showAllFromQuery("SELECT COUNT(PatronID) FROM Patrons");
-//		System.out.println(getPatronSize[0][0]);
-//		
-//		String[][] getBookSize = db.showAllFromQuery("SELECT COUNT(BookID) FROM Books");
-//		System.out.println(getBookSize[0][0]);
+		db.checkOutBookByIDs("6", "1");
+		
+		System.out.println();
+		System.out.println("Books checked out by patron:");
+		String[][] booksCheckedOutByPatron = db.BooksCheckedOutByPatronNames("Mike", "Dey");
+		for (int i = 0; i < booksCheckedOutByPatron.length; i++)
+		{
+			for (int j = 0; j < booksCheckedOutByPatron[0].length; j++)
+			{
+				System.out.print(booksCheckedOutByPatron[i][j] + " ");
+			}
+			System.out.println();
+		}
 	}
 }

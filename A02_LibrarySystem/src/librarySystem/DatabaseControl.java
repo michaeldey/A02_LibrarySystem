@@ -274,6 +274,7 @@ public class DatabaseControl {
 	
 	/**
 	 * finds book in database, sets it's CheckedOut to True, and adds the PatronID who has it checked out
+	 * 
 	 * @param title - title of the book
 	 * @param patronFirst - Patron's first name
 	 * @param patronLast - Patron's last name
@@ -292,6 +293,7 @@ public class DatabaseControl {
 	// change this to take patron first, patron last
 	/**
 	 * finds book in database, sets it's CheckedOut to True, and adds the PatronID who has it checked out
+	 * 
 	 * @param bookID
 	 * @param patronID
 	 * @throws SQLException
@@ -308,6 +310,7 @@ public class DatabaseControl {
 	
 	/**
 	 * Finds a book in database, sets it's CheckedOut to False, removes the PatronID information
+	 * 
 	 * @param bookID
 	 * @throws SQLException
 	 */
@@ -322,6 +325,7 @@ public class DatabaseControl {
 	}
 	
 	/**
+	 * returns grid of books based on if the book is checked in, out, or all books, sorted by row name
 	 * 
 	 * @param checkedInStatus one of three String variables indicating the type of checked-out book to show, In, Out, or ALL
 	 * @param sortByName is the name of the SQL table row to sort by
@@ -340,13 +344,31 @@ public class DatabaseControl {
 	}
 	
 	/**
+	 * Returns patron grid sorted by indicated row name
 	 * 
-	 * @param sortByName lists all Patrons sorted by indicated value
+	 * @param sortByName row name indicating how to sort
 	 * @return String[][] which will be used to make a grid in the gui
 	 * @throws SQLException
 	 */
 	public static String[][] makePatronGrid(String sortByName) throws SQLException
 	{
 		return showAllFromQuery("SELECT * FROM Patrons ORDER BY "+ sortByName);
+	}
+	
+	/**
+	 * Returns grid of books checked out by a particular patron
+	 * 
+	 * @param fName patrons first name
+	 * @param lName patrons last name
+	 * @return String[][] which will be used to make a grid in the GUI
+	 * @throws SQLException
+	 */
+	public static String[][] BooksCheckedOutByPatronNames(String fName, String lName) throws SQLException
+	{
+		String myCommand = 	"SELECT * FROM BOOKS WHERE PatronID = "
+							+"(SELECT PatronID FROM PATRONS WHERE "
+							+"fName = '" + fName +"' AND lName = '"+ lName+"')";
+
+		return showAllFromQuery(myCommand);
 	}
 }
