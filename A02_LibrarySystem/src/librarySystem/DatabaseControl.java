@@ -75,7 +75,6 @@ public class DatabaseControl {
 		try
 		{
 			connection = DriverManager.getConnection(connectionURL); //make a connection
-//			connection.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 		}
 		catch (SQLException e)
 		{
