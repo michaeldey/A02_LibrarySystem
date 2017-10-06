@@ -321,9 +321,13 @@ public class DatabaseControl {
 		dbCommunicate(myCommand);
 	}
 	
-	public static String[][] makeBookGrid(String checkedIn, String sortByName) throws SQLException
+	public static String[][] makeBookGrid(String checkedInStatus, String sortByName) throws SQLException
 	{
-		String myCommand = "SELECT * FROM Books";
+		String myCommand;
+		if (checkedInStatus.equals("IN") || checkedInStatus.equals("OUT"))
+			myCommand = "SELECT * FROM Books WHERE CheckedOut = '"+ checkedInStatus+"' ORDER BY "+ sortByName;
+		else
+			myCommand = "SELECT * FROM Books ORDER BY "+ sortByName;
 		
 		return showAllFromQuery(myCommand);
 	}
