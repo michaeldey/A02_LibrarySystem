@@ -363,11 +363,9 @@ public class DatabaseControl {
 	 * @return String[][] which will be used to make a grid in the GUI
 	 * @throws SQLException
 	 */
-	public static String[][] BooksCheckedOutByPatronNames(String fName, String lName) throws SQLException
+	public static String[][] BooksCheckedOutByPatronNames(String patronID) throws SQLException
 	{
-		String myCommand = 	"SELECT * FROM BOOKS WHERE PatronID = "
-							+"(SELECT PatronID FROM PATRONS WHERE "
-							+"fName = '" + fName +"' AND lName = '"+ lName+"')";
+		String myCommand = 	"SELECT * FROM BOOKS WHERE PatronID = "+patronID;
 
 		return showAllFromQuery(myCommand);
 	}
