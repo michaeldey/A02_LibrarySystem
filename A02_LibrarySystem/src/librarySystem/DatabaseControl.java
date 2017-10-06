@@ -358,12 +358,11 @@ public class DatabaseControl {
 	/**
 	 * Returns grid of books checked out by a particular patron
 	 * 
-	 * @param fName patrons first name
-	 * @param lName patrons last name
+	 * @param patronID is the patronID of the indicated patron you want to see
 	 * @return String[][] which will be used to make a grid in the GUI
 	 * @throws SQLException
 	 */
-	public static String[][] BooksCheckedOutByPatronNames(String patronID) throws SQLException
+	public static String[][] BooksCheckedOutByPatronID(String patronID) throws SQLException
 	{
 		String myCommand = 	"SELECT * FROM BOOKS WHERE PatronID = "+patronID;
 
