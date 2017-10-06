@@ -49,7 +49,7 @@ public class DatabaseControl {
 			+ "AuthorFirst VARCHAR(25), "
 			+ "AuthorLast VARCHAR(25), "
 			+ "Genre VARCHAR(15), "
-			+ "CheckedOut BOOLEAN, "
+			+ "CheckedOut VARCHAR(3), "
 			+ "PatronID INT, "
 			+ "PRIMARY KEY (BookID), "
 			+ "FOREIGN KEY (PatronID) REFERENCES Patrons(PatronID)"
@@ -176,7 +176,7 @@ public class DatabaseControl {
 							+ "'"+ authorFirst +"', "		// AuthorFirst VARCHAR(25)
 							+ "'"+ authorLast +"', "		// AuthorLast VARCHAR(25)
 							+ "'"+ genre +"', "				// Genre VARCHAR(15)
-							+ "FALSE, "						// CheckedOut BOOLEAN
+							+ "'IN', "						// CheckedOut VARCHAR(3)
 							+ "null)";						// PatronID INT
 
 		dbCommunicate(myCommand);
@@ -283,13 +283,14 @@ public class DatabaseControl {
 	public static void checkOutBookByNames(String title, String patronFirst, String patronLast) throws SQLException
 	{
 		String myCommand = 	"UPDATE BOOKS "
-				+ "SET CheckedOut = TRUE, "
+				+ "SET CheckedOut = 'OUT', "
 				+ "PatronID = (SELECT PatronID FROM PATRONS WHERE FName='"+ patronFirst +"' AND LName = '"+ patronLast +"')"
 				+ "WHERE Title = '"+ title +"'";
 
 		dbCommunicate(myCommand);
 	}
 	
+	// change this to take patron first, patron last
 	/**
 	 * finds book in database, sets it's CheckedOut to True, and adds the PatronID who has it checked out
 	 * @param bookID
@@ -299,7 +300,7 @@ public class DatabaseControl {
 	public static void checkOutBookByIDs(String bookID, String patronID) throws SQLException
 	{
 		String myCommand = 	"UPDATE BOOKS "
-				+ "SET CheckedOut = TRUE, "
+				+ "SET CheckedOut = 'OUT', "
 				+ "PatronID = " + patronID
 				+ "WHERE BookID = "+ bookID;
 
@@ -314,10 +315,17 @@ public class DatabaseControl {
 	public static void checkInBookByIDs(String bookID) throws SQLException
 	{
 		String myCommand = 	"UPDATE BOOKS "
-				+ "SET CheckedOut = FALSE, "
+				+ "SET CheckedOut = 'IN', "
 				+ "PatronID = null "
 				+ "WHERE BookID = "+ bookID;
 
 		dbCommunicate(myCommand);
+	}
+	
+	public static String[][] makeBookGrid(String checkedIn, String sortByName) throws SQLException
+	{
+		String myCommand = "SELECT * FROM Books";
+		
+		return showAllFromQuery(myCommand);
 	}
 }
