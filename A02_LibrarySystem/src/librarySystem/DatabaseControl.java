@@ -321,6 +321,13 @@ public class DatabaseControl {
 		dbCommunicate(myCommand);
 	}
 	
+	/**
+	 * 
+	 * @param checkedInStatus one of three String variables indicating the type of checked-out book to show, In, Out, or ALL
+	 * @param sortByName is the name of the SQL table row to sort by
+	 * @return String[][] which will be used to make a grid in the GUI
+	 * @throws SQLException
+	 */
 	public static String[][] makeBookGrid(String checkedInStatus, String sortByName) throws SQLException
 	{
 		String myCommand;
@@ -330,5 +337,16 @@ public class DatabaseControl {
 			myCommand = "SELECT * FROM Books ORDER BY "+ sortByName;
 		
 		return showAllFromQuery(myCommand);
+	}
+	
+	/**
+	 * 
+	 * @param sortByName lists all Patrons sorted by indicated value
+	 * @return String[][] which will be used to make a grid in the gui
+	 * @throws SQLException
+	 */
+	public static String[][] makePatronGrid(String sortByName) throws SQLException
+	{
+		return showAllFromQuery("SELECT * FROM Patrons ORDER BY "+ sortByName);
 	}
 }
