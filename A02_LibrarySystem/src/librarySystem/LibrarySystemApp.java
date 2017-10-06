@@ -25,8 +25,7 @@ public class LibrarySystemApp {
 //		db.checkInBookByIDs("3");
 //		
 		System.out.println("All books:");
-		String[][] allBooks = db.makeBookGrid("IN", "BookID");
-		
+		String[][] allBooks = db.makeBookGrid("ALL", "BookID");		
 		
 		for (int i = 0; i < allBooks.length; i++)
 		{
@@ -42,7 +41,7 @@ public class LibrarySystemApp {
 
 		
 		System.out.println("All Patrons:");
-		String[][] allPatrons = db.makePatronGrid("FName");
+		String[][] allPatrons = db.makePatronGrid("PatronID");
 		for (int i = 0; i < allPatrons.length; i++)
 		{
 			for (int j = 0; j < allPatrons[0].length; j++)
@@ -52,10 +51,10 @@ public class LibrarySystemApp {
 			System.out.println();
 		}
 		
-		String[][] getPatronSize = db.showAllFromQuery("SELECT COUNT(PatronID) FROM Patrons");
-		System.out.println(getPatronSize[0][0]);
-		
-		String[][] getBookSize = db.showAllFromQuery("SELECT COUNT(BookID) FROM Books");
-		System.out.println(getBookSize[0][0]);
+//		String[][] getPatronSize = db.showAllFromQuery("SELECT COUNT(PatronID) FROM Patrons");
+//		System.out.println(getPatronSize[0][0]);
+//		
+//		String[][] getBookSize = db.showAllFromQuery("SELECT COUNT(BookID) FROM Books");
+//		System.out.println(getBookSize[0][0]);
 	}
 }
