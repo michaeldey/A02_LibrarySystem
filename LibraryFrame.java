@@ -935,19 +935,3 @@ public class LibraryFrame extends JFrame  {
 			}
 	      		
 		  }	  
-		 
-
-
-		  
-		  		  		  
-		  
-
-		
-		
-		
-	
-
-	
-	
-
-
