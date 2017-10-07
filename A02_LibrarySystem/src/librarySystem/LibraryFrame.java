@@ -1,7 +1,7 @@
 /********************************************************
  *
  *  Project :  A02 Library System
- *  File    :  DatabaseControl.java
+ *  File    :  LibraryFrame.java
  *  Name    :  Michael Dey Lisa Hammond
  *  Date    :  23 Sept 2017
  *

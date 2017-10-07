@@ -1,7 +1,7 @@
 /********************************************************
  *
  *  Project :  A02 Library System
- *  File    :  DatabaseControl.java
+ *  File    :  LibrarySystemApp.java
  *  Name    :  Michael Dey Lisa Hammond
  *  Date    :  23 Sept 2017
  *
@@ -26,6 +26,7 @@ import java.sql.SQLException;
 public class LibrarySystemApp {
 
 	public static void main(String[] args) throws SQLException {
+		DatabaseControl test;
 		DatabaseControl db = new DatabaseControl("Library_10"); //create a new database with the name indicated
 		
 		//check if database exists, if it does not, generate a list, otherwise, don't generate a list
