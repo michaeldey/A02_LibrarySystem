@@ -103,6 +103,33 @@ public class DatabaseControl {
 	}
 
 	/**
+	 * Checks the database to see if books or patrons tables exist. if so return true, else return false
+	 * @return
+	 */
+	public boolean doesDBExist()
+	{
+		try
+		{
+			DatabaseMetaData dbmd = connection.getMetaData();						//get database metadata
+			ResultSet booksResultSet = dbmd.getTables(null, "APP", "BOOKS", null);		//create a resultset of the metadata
+			ResultSet patronsResultSet =  dbmd.getTables(null, "APP", "PATRONS", null);		//create a resultset of the metadata
+			
+			//if the resultSets have next(), then the database is already created and should return true
+			if (!booksResultSet.next() && !patronsResultSet.next())
+			{
+				return false;	//send the SQL command to dbCommunicate()
+			}
+			else return true;
+		}
+		catch(SQLException e)
+		{
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	/**
 	 * This method creates a statement which is used in Database queries
 	 * @return Statement used to Query the database
 	 * @throws SQLException
@@ -111,7 +138,7 @@ public class DatabaseControl {
 	{
 		return connection.createStatement();								//Statement returned to method
 	}
-	
+		
 	/**
 	 * Connect to database, check if the table exists, if it does not exist, send SQL command to dbCommunicate()
 	 * 

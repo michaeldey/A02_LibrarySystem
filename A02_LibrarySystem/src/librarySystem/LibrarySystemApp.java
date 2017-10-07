@@ -1,3 +1,24 @@
+/********************************************************
+ *
+ *  Project :  A02 Library System
+ *  File    :  DatabaseControl.java
+ *  Name    :  Michael Dey Lisa Hammond
+ *  Date    :  23 Sept 2017
+ *
+ *  Description : (Narrative desciption, not code)
+ *
+ *    1) What is the purpose of the code; what problem does the code solve.
+ *    		This Class serves as the application's main() in order to start the application
+ *    
+ *    		It also serves to add items to the database if it's a new database.
+ *
+ *    2) What data-structures are used.
+ *    		
+ *
+ *    3) What algorithms, techniques, etc. are used in implementing the data structures.
+ *    		it creates a DatabaseControl object and a LibraryFrame object to be used together
+ *
+ ********************************************************/
 package librarySystem;
 
 import java.sql.SQLException;
@@ -7,8 +28,13 @@ public class LibrarySystemApp {
 	public static void main(String[] args) throws SQLException {
 		DatabaseControl db = new DatabaseControl("Library_10"); //create a new database with the name indicated
 		
-//		generateBookList(db);		//adds a list of 30 books to the database		
-//		generatePatronList(db);		//adds a list of 15 patrons to the database
+		//check if database exists, if it does not, generate a list, otherwise, don't generate a list
+		if (!db.doesDBExist())
+		{
+			System.out.println("Generating lists.");
+			generateBookList(db);		//adds a list of 30 books to the database		
+			generatePatronList(db);		//adds a list of 15 patrons to the database
+		}
 		
 		LibraryFrame lf = new LibraryFrame(db);
 		
