@@ -252,7 +252,7 @@ public class LibraryFrame extends JFrame  {
 	        
 	        boxBooksNorth = new JPanel();
 	        boxBooksNorth.setLayout(libraryLayout);
-	        boxBooksNorth.setPreferredSize(new Dimension(200, 600));
+	        boxBooksNorth.setPreferredSize(new Dimension(200, 700));
 	        panelBookTab.add(new JScrollPane(boxBooksNorth));
 	        panelBookTab.add(Box.createRigidArea(new Dimension(0,20)));
 	        
@@ -276,7 +276,7 @@ public class LibraryFrame extends JFrame  {
 	       	        
 	        boxPatronsNorth = new JPanel();
 	        boxPatronsNorth.setLayout(patronLayout);
-	        boxPatronsNorth.setPreferredSize(new Dimension(200, 200));
+	        boxPatronsNorth.setPreferredSize(new Dimension(200, 400));
 	        panelPatronTab.add(new JScrollPane(boxPatronsNorth));
 	        panelPatronTab.add(Box.createRigidArea(new Dimension(0,20)));
 	        
