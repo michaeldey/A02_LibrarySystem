@@ -1,3 +1,27 @@
+/********************************************************
+ *
+ *  Project :  A02 Library System
+ *  File    :  DatabaseControl.java
+ *  Name    :  Michael Dey Lisa Hammond
+ *  Date    :  23 Sept 2017
+ *
+ *  Description : (Narrative desciption, not code)
+ *
+ *    1) What is the purpose of the code; what problem does the code solve.
+ *    		This Class creates and shows the GUI
+ *    		It interfaces with the DatabaseControl (db)
+ *    			in order to send information to, and gather information from the database
+ *
+ *    2) What data-structures are used.
+ *
+ *    3) What algorithms, techniques, etc. are used in implementing the data structures.
+ *
+ *    4) What methods are implemented (optional).
+ *
+ *  Changes :  <Description|date of modifications>
+ *
+ ********************************************************/
+
 package librarySystem;
 
 import java.awt.BorderLayout;
@@ -61,11 +85,14 @@ public class LibraryFrame extends JFrame  {
 	 * Create the frame.
 	 */
 	  
-		  public LibraryFrame() throws SQLException {
+		public LibraryFrame(DatabaseControl db) throws SQLException {
 			  
 		    super("Library System"); // Set window title
+		    
+			
+			setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			setMinimumSize(new Dimension(1000, 500));
 		    	
-		    db = new DatabaseControl("Library_08");
 		    
 		    // Close connections exit the application when the user
 		    // closes the window
@@ -950,7 +977,7 @@ public class LibraryFrame extends JFrame  {
 		      });
 	
 		  
-		  		  
+		    setVisible(true);		  		  
 } //end class  
 	
 		  /**
@@ -1027,22 +1054,5 @@ public class LibraryFrame extends JFrame  {
 		      		boxBooksNorth.repaint();
 			}
 
-		  
-			/**
-			 * Launch the application
-			 */
-			public static void main(String[] args) {
-				EventQueue.invokeLater(new Runnable() {
-					public void run() {
-						try {
-							LibraryFrame frame = new LibraryFrame();
-							frame.setVisible(true);
-							frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-							frame.setMinimumSize(new Dimension(1000, 500));
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				});
-			}		  
+		  		  
 }

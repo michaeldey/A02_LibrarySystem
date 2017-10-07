@@ -2,7 +2,7 @@
  *
  *  Project :  A02 Library System
  *  File    :  DatabaseControl.java
- *  Name    :  Michael Dey
+ *  Name    :  Michael Dey Lisa Hammond
  *  Date    :  23 Sept 2017
  *
  *  Description : (Narrative desciption, not code)
@@ -12,12 +12,10 @@
  *    		It serves as a back-end interface between the GUI and the SQL database
  *
  *    2) What data-structures are used.
+ *    		This converts database query results into String[][] for the GUI to process
  *
  *    3) What algorithms, techniques, etc. are used in implementing the data structures.
- *
- *    4) What methods are implemented (optional).
- *
- *  Changes :  <Description|date of modifications>
+ *    		This creates and interacts with a local database using Java DB and the derby interface
  *
  ********************************************************/
 
@@ -204,7 +202,7 @@ public class DatabaseControl {
 	 * @throws SQLException when connection to database is incorrect
 	 * @return String[][] returnString
 	 */
-	public static String[][] showAllFromQuery(String myCommand) throws SQLException
+	private static String[][] showAllFromQuery(String myCommand) throws SQLException
 	{
 		Statement statement = getStatement();	//get statement block from SQL Database
 		String[][] returnString;
@@ -216,13 +214,6 @@ public class DatabaseControl {
 			ResultSetMetaData rsmd = resultSet.getMetaData(); 		//get metadata from resultSet
 			int columnCount = rsmd.getColumnCount();				//number of columns in the resultSet
 						
-//			//print the Header information from the resultSet query
-//			for (int i = 1; i <= columnCount; i++)
-//			{			
-//				System.out.printf("%s ",rsmd.getColumnLabel(i));
-//			}
-//			System.out.println();			
-			
 			/**Loop through all of the returned pieces in the query
 			 * determine what data type they are, and retrieve them according to their type
 			 */
@@ -236,17 +227,14 @@ public class DatabaseControl {
 					if(type == Types.VARCHAR || type == Types.CHAR)			//type is a String or char
 					{
 						resultsList.add(resultSet.getString(i));
-//						System.out.print(resultSet.getString(i)+" ");
 					}
 					else if (type == Types.BOOLEAN)							//type is a Boolean
 					{
 						resultsList.add(String.valueOf(resultSet.getBoolean(i)));
-//						System.out.print(resultSet.getBoolean(i)+" ");
 					}
 					else													//type is an int
 					{
 						resultsList.add(String.valueOf(resultSet.getInt(i)));
-//						System.out.print(resultSet.getInt(i)+" ");
 					}
 				}
 			}
@@ -290,7 +278,6 @@ public class DatabaseControl {
 		dbCommunicate(myCommand);
 	}
 	
-	// change this to take patron first, patron last
 	/**
 	 * finds book in database, sets it's CheckedOut to True, and adds the PatronID who has it checked out
 	 * 
@@ -327,7 +314,7 @@ public class DatabaseControl {
 	/**
 	 * returns grid of books based on if the book is checked in, out, or all books, sorted by row name
 	 * 
-	 * @param checkedInStatus one of three String variables indicating the type of checked-out book to show, In, Out, or ALL
+	 * @param checkedInStatus one of three String variables indicating the type of checked-out book to show, IN, OUT, or ALL
 	 * @param sortByName is the name of the SQL table row to sort by
 	 * @return String[][] which will be used to make a grid in the GUI
 	 * @throws SQLException
